@@ -2,6 +2,7 @@ namespace PHE {
   import fc = FudgeCore;
 
   export class GameObject extends fc.Node {
+    
     private static readonly meshQuad: fc.MeshSprite = new fc.MeshSprite();
     public mtxPivot: fc.Matrix4x4;
     public mtxPivotInverse: fc.Matrix4x4;
@@ -15,7 +16,7 @@ namespace PHE {
 
       let cmpQuad: fc.ComponentMesh = new fc.ComponentMesh(GameObject.meshQuad);
       this.addComponent(cmpQuad);
-      cmpQuad.pivot.scale(_size.toVector3(1));
+      cmpQuad.pivot.scale(_size.toVector3(0));
 
       this.mtxPivot = this.getComponent(fc.ComponentMesh).pivot;
     }

@@ -8,8 +8,8 @@ namespace PHE {
         super("Wall", _size, _position);
   
         let cmpMaterial: fc.ComponentMaterial = new fc.ComponentMaterial(_material);
-        //cmpMaterial.pivot.scale(fc.Vector2.ONE(1));
         this.addComponent(cmpMaterial);
+        
       }
     }
   }

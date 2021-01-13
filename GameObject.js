@@ -9,7 +9,7 @@ var PHE;
             //this.mtxLocal.rotation = _rotation;
             let cmpQuad = new fc.ComponentMesh(GameObject.meshQuad);
             this.addComponent(cmpQuad);
-            cmpQuad.pivot.scale(_size.toVector3(1));
+            cmpQuad.pivot.scale(_size.toVector3(0));
             this.mtxPivot = this.getComponent(fc.ComponentMesh).pivot;
         }
         calculateBounce(_posWith, _radius = 1) {
