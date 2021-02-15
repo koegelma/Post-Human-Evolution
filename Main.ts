@@ -6,10 +6,9 @@ namespace PHE {
 
     export let viewport: fc.Viewport;
 
-    //const canvas: HTMLCanvasElement = document.querySelector("canvas");
     let root: fc.Node;
     let level: fc.Node;
-    let avatar: fc.Node;
+    let avatar: Avatar;
     let walls: fc.Node;
     let floor: fc.Node;
 
@@ -26,20 +25,11 @@ namespace PHE {
 
     let controlDash: fc.Control = new fc.Control("AvatarControlDash", 1, fc.CONTROL_TYPE.PROPORTIONAL);
 
-    let controlRotation: fc.Control = new fc.Control("AvatarRotation", -0.1, fc.CONTROL_TYPE.PROPORTIONAL);
-    //controlRotation.setDelay(80);
-
-    /*     let xWidth: fc.Control = new fc.Control("CanvasWidth", 1, fc.CONTROL_TYPE.PROPORTIONAL);
-        let yHeight: fc.Control = new fc.Control("CanvasWidth", 1, fc.CONTROL_TYPE.PROPORTIONAL); */
-
-    let usedDash: boolean = false;
+    export let controlRotation: fc.Control = new fc.Control("RotationAngle", 1, fc.CONTROL_TYPE.PROPORTIONAL);
 
     function hndLoad(_event: Event): void {
 
         const canvas: HTMLCanvasElement = document.querySelector("canvas");
-
-        /* xWidth.setInput(canvas.width / 2);
-        yHeight.setInput(canvas.height / 2); */
 
         root = new fc.Node("Root");
         root.addComponent(new fc.ComponentTransform());
@@ -64,7 +54,7 @@ namespace PHE {
         cmpCamera.pivot.translateZ(18);
         cmpCamera.pivot.rotateY(180);
         cmpCamera.backgroundColor = fc.Color.CSS("black");
-        //avatar.addComponent(cmpCamera);
+        avatar.addComponent(cmpCamera);
 
         // Setup Viewport
         viewport = new fc.Viewport();
@@ -73,82 +63,41 @@ namespace PHE {
         // EventListener
         canvas.addEventListener("mousemove", hndMouse);
         fc.Loop.addEventListener(fc.EVENT.LOOP_FRAME, hndLoop);
-        fc.Loop.start(fc.LOOP_MODE.TIME_GAME, 60);
+        fc.Loop.start(fc.LOOP_MODE.TIME_GAME, 120);
     }
 
     function hndLoop(_event: Event): void {
-
-        moveAvatar(controlVertical.getOutput(), controlHorizontal.getOutput(), controlDash.getOutput(), controlRotation.getOutput());
+        setControlInput();
+        avatar.move(controlVertical.getOutput(), controlHorizontal.getOutput(), controlDash.getOutput(), controlRotation.getOutput());
         controlRotation.setInput(0);
 
         viewport.draw();
     }
 
-    function hndMouse(_event: MouseEvent): void {
-        //console.log(_event.clientX, _event.clientY);
-
-        let mousePos: fc.Vector2 = new fc.Vector2(_event.clientX, _event.clientY);
-        let mousePos3D: fc.Vector3 = new fc.Vector3(_event.clientX, _event.clientY, 0);
-        let normal: fc.Vector3 = floor.mtxWorld.getZ();
-        let intersect: fc.Vector3 = viewport.getRayFromClient(mousePos).intersectPlane(mousePos3D, normal);
-
-        //console.log(intersect.x, intersect.y, intersect.z);
-
-        let vecAnim: fc.Vector3 = new fc.Vector3(1, 0, 0);
-
-        let angle: number = fc.Vector3.DOT(intersect, vecAnim) / (vectorAmount(intersect) * vectorAmount(vecAnim));
-        angle = Math.acos(angle) * 180 / Math.PI;
-
-        console.log(angle);
-
-        controlRotation.setInput(angle);
-
-
-
-    }
-
-    function vectorAmount(_vector: fc.Vector3): number {
-        return Math.sqrt(Math.pow(_vector.x, 2) + Math.pow(_vector.y, 2) + Math.pow(_vector.z, 2));
-    }
-
-    function moveAvatar(_translationY: number, _translationX: number, _dash: number, _rotation: number): void {
-
+    function setControlInput(): void {
         controlVertical.setInput(
             fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.W, fc.KEYBOARD_CODE.ARROW_LEFT])
             + fc.Keyboard.mapToValue(-1, 0, [fc.KEYBOARD_CODE.S, fc.KEYBOARD_CODE.ARROW_RIGHT])
         );
-
         controlHorizontal.setInput(
             fc.Keyboard.mapToValue(-1, 0, [fc.KEYBOARD_CODE.A, fc.KEYBOARD_CODE.ARROW_LEFT])
             + fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.D, fc.KEYBOARD_CODE.ARROW_RIGHT])
         );
-
         controlDash.setInput(
             fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.SHIFT_LEFT, fc.KEYBOARD_CODE.SPACE])
         );
+    }
 
-        let speedX: number = _translationX * 0.08;
-        let speedY: number = _translationY * 0.08;
+    function hndMouse(_event: MouseEvent): void {
+        let mousePosClient: fc.Vector2 = new fc.Vector2(_event.clientX, _event.clientY);
+        let mousePos3DClient: fc.Vector3 = new fc.Vector3(_event.clientX, _event.clientY, 0);
+        //console.log("X: " + _event.clientX + "\nY: " + _event.clientY);
 
-        if (_dash == 1 && !usedDash) {
-            let dashSpeed: number = 25;
-            speedX *= dashSpeed;
-            speedY *= dashSpeed;
-            usedDash = true;
-            console.log("Dash was just used");
-            fc.Time.game.setTimer(2000, 1, (_event: fc.EventTimer) => {
-                usedDash = false;
-                console.log("Dash can be used again");
-            });
-        } else {
-            speedX *= 1;
-            speedY *= 1;
-        }
+        let normal: fc.Vector3 = floor.mtxWorld.getZ();
+        //let normal: fc.Vector3 = new fc.Vector3(0, 0, 1);
+        let mousePosWorld: fc.Vector3 = viewport.getRayFromClient(mousePosClient).intersectPlane(mousePos3DClient, normal);
 
-        avatar.mtxLocal.translateX(speedX);
-        avatar.mtxLocal.translateY(speedY);
-
-        avatar.mtxLocal.rotateZ(_rotation);
+        avatar.rotateTo(mousePosWorld);
 
     }
 
