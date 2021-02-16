@@ -6,8 +6,8 @@ namespace PHE {
 
     export let viewport: fc.Viewport;
 
-    let root: fc.Node;
-    let level: fc.Node;
+    export let root: fc.Node;
+    export let level: fc.Node;
     let avatar: Avatar;
     let walls: fc.Node;
     let floor: fc.Node;
@@ -23,9 +23,12 @@ namespace PHE {
     let controlHorizontal: fc.Control = new fc.Control("AvatarControlHorizontal", 1, fc.CONTROL_TYPE.PROPORTIONAL);
     controlHorizontal.setDelay(80);
 
+    export let controlRotation: fc.Control = new fc.Control("AvatarControlRotation", 1, fc.CONTROL_TYPE.PROPORTIONAL);
+    controlRotation.setDelay(80);
+
     let controlDash: fc.Control = new fc.Control("AvatarControlDash", 1, fc.CONTROL_TYPE.PROPORTIONAL);
 
-    export let controlRotation: fc.Control = new fc.Control("RotationAngle", 1, fc.CONTROL_TYPE.PROPORTIONAL);
+    //export let controlRotation: fc.Control = new fc.Control("RotationAngle", 1, fc.CONTROL_TYPE.PROPORTIONAL);
 
     function hndLoad(_event: Event): void {
 
@@ -42,7 +45,7 @@ namespace PHE {
         level.appendChild(floor);
 
         // Avatar
-        avatar = new Avatar("Avatar", new fc.Vector3(0, 0, 0));
+        avatar = new Avatar("Avatar", fc.Vector2.ZERO(), new fc.Vector3(0, 0, 0));
         root.appendChild(avatar);
 
         // Walls
@@ -61,34 +64,41 @@ namespace PHE {
         viewport.initialize("Viewport", root, cmpCamera, canvas);
 
         // EventListener
-        canvas.addEventListener("mousemove", hndMouse);
+        // canvas.addEventListener("mousemove", hndMouse);
         fc.Loop.addEventListener(fc.EVENT.LOOP_FRAME, hndLoop);
-        fc.Loop.start(fc.LOOP_MODE.TIME_GAME, 120);
+        fc.Loop.start(fc.LOOP_MODE.TIME_GAME, 60);
     }
 
     function hndLoop(_event: Event): void {
         setControlInput();
         avatar.move(controlVertical.getOutput(), controlHorizontal.getOutput(), controlDash.getOutput(), controlRotation.getOutput());
-        controlRotation.setInput(0);
+        //controlRotation.setInput(0);
+
+        hndAvatar();
 
         viewport.draw();
+
     }
 
     function setControlInput(): void {
         controlVertical.setInput(
-            fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.W, fc.KEYBOARD_CODE.ARROW_LEFT])
-            + fc.Keyboard.mapToValue(-1, 0, [fc.KEYBOARD_CODE.S, fc.KEYBOARD_CODE.ARROW_RIGHT])
+            fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.W])
+            + fc.Keyboard.mapToValue(-1, 0, [fc.KEYBOARD_CODE.S])
         );
         controlHorizontal.setInput(
-            fc.Keyboard.mapToValue(-1, 0, [fc.KEYBOARD_CODE.A, fc.KEYBOARD_CODE.ARROW_LEFT])
-            + fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.D, fc.KEYBOARD_CODE.ARROW_RIGHT])
+            fc.Keyboard.mapToValue(-1, 0, [fc.KEYBOARD_CODE.A])
+            + fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.D])
         );
         controlDash.setInput(
-            fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.SHIFT_LEFT, fc.KEYBOARD_CODE.SPACE])
+            fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.SHIFT_LEFT])
+        );
+        controlRotation.setInput(
+            fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.ARROW_LEFT])
+            + fc.Keyboard.mapToValue(-1, 0, [fc.KEYBOARD_CODE.ARROW_RIGHT])
         );
     }
 
-    function hndMouse(_event: MouseEvent): void {
+    /* function hndMouse(_event: MouseEvent): void {
         let mousePosClient: fc.Vector2 = new fc.Vector2(_event.clientX, _event.clientY);
         let mousePos3DClient: fc.Vector3 = new fc.Vector3(_event.clientX, _event.clientY, 0);
         //console.log("X: " + _event.clientX + "\nY: " + _event.clientY);
@@ -99,14 +109,35 @@ namespace PHE {
 
         avatar.rotateTo(mousePosWorld);
 
+    } */
+
+    function hndAvatar(): void {
+
+        let tempPos: fc.Vector3 = avatar.mtxLocal.translation;
+
+        let collisionsWall: Wall = avatar.hndCollision();
+        if (collisionsWall) {
+            tempPos.x += collisionsWall.mtxLocal.getY().y * 0.05;
+            tempPos.y += collisionsWall.mtxLocal.getY().y * 0.05;
+            avatar.mtxLocal.translation = tempPos;
+            console.log("Hit");
+        }
     }
 
     function createWalls(): fc.Node {
         let walls: fc.Node = new fc.Node("Walls");
-        walls.appendChild(new Wall(new fc.Vector2(0.5, 20.5), new fc.Vector3(-18, 0, 0), white));
-        walls.appendChild(new Wall(new fc.Vector2(0.5, 20.5), new fc.Vector3(18, 0, 0), white));
-        walls.appendChild(new Wall(new fc.Vector2(35.5, 0.5), new fc.Vector3(0, 10, 0), white));
-        walls.appendChild(new Wall(new fc.Vector2(35.5, 0.5), new fc.Vector3(0, -10, 0), white));
+        //walls.appendChild(new Wall(new fc.Vector2(0.5, 20.5), new fc.Vector3(-18, 0, 0), white));
+
+        for (let i: number = 0; i < 21; i += 0.5) {
+            walls.appendChild(new Wall(new fc.Vector2(0.5, i), new fc.Vector3(-18, 0, 0), white));
+            walls.appendChild(new Wall(new fc.Vector2(0.5, i), new fc.Vector3(18, 0, 0), white));
+        }
+
+        for (let i: number = 0; i < 36; i += 0.5) {
+            walls.appendChild(new Wall(new fc.Vector2(i, 0.5), new fc.Vector3(0, 10, 0), white));
+            walls.appendChild(new Wall(new fc.Vector2(i, 0.5), new fc.Vector3(0, -10, 0), white));
+        }
+
         return walls;
     }
 
@@ -126,9 +157,11 @@ namespace PHE {
 
 // TODO
 
-// - Avatar Klasse und Funktionen auslagern
-// - Sprites
-// - Dash verbessern
 // - Bounce / Collision GameObject
+// - Sprites
+// - Enemies (State Machine)
+// - Dash verbessern
 // - Shooting
 // - Level Builder
+// - Items
+
