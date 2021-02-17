@@ -3,22 +3,24 @@ var PHE;
 (function (PHE) {
     var fc = FudgeCore;
     var fcaid = FudgeAid;
-    class Avatar extends PHE.GameObject {
+    class Avatar extends PHE.Moveable {
         constructor(_name, _size, _position) {
             super(_name, _size, _position);
+            // public rect: fc.Rectangle;
             this.white = fc.Color.CSS("white");
             this.meshQuad = new fc.MeshQuad();
             this.txtAvatar = new fc.TextureImage("../Assets/survivor-move_handgun_0.png");
             this.mtrAvatar = new fc.Material("MaterialAvatar", fc.ShaderTexture, new fc.CoatTextured(this.white, this.txtAvatar));
             this.usedDash = false;
-            //  this.addComponent(new fc.ComponentTransform);
-            this.animation = new fcaid.Node("Show", fc.Matrix4x4.IDENTITY());
+            this.animation = new fcaid.Node("Animation", fc.Matrix4x4.IDENTITY());
             this.appendChild(this.animation);
             this.animation.addComponent(new fc.ComponentMaterial(this.mtrAvatar));
             this.animation.addComponent(new fc.ComponentMesh(this.meshQuad));
+            this.animation.mtxLocal.translateZ(0.01);
             this.mtxLocal.translation = _position;
+            //this.rect = new fc.Rectangle(_position.x, _position.y, _size.x, _size.y, fc.ORIGIN2D.CENTER);
         }
-        move(_translationY, _translationX, _dash, _rotation) {
+        moveAvatar(_translationY, _translationX, _dash, _rotation) {
             let speedX = _translationX * 0.08;
             let speedY = _translationY * 0.08;
             let rotation = _rotation * 4.5;
@@ -39,6 +41,10 @@ var PHE;
             }
             this.mtxLocal.translateX(speedX);
             this.mtxLocal.translateY(speedY);
+            // this.rect.position.x = this.mtxLocal.translation.x;
+            //this.rect.position.y = this.mtxLocal.translation.y;
+            this.rect.position.x = this.mtxLocal.translation.x - this.rect.size.x / 2;
+            this.rect.position.y = this.mtxLocal.translation.y - this.rect.size.y / 2;
             this.animation.mtxLocal.rotateZ(rotation);
         }
     }

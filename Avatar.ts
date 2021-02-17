@@ -2,7 +2,9 @@ namespace PHE {
     import fc = FudgeCore;
     import fcaid = FudgeAid;
 
-    export class Avatar extends GameObject {
+    export class Avatar extends Moveable {
+
+        // public rect: fc.Rectangle;
 
         private white: fc.Color = fc.Color.CSS("white");
         private meshQuad: fc.MeshQuad = new fc.MeshQuad();
@@ -11,18 +13,21 @@ namespace PHE {
         private animation: fc.Node;
         private usedDash: boolean = false;
 
-        public constructor(_name: string, _size: fc.Vector2, _position: fc.Vector3) {
+
+
+        public constructor(_name: string, _size: fc.Vector3, _position: fc.Vector3) {
             super(_name, _size, _position);
-            //  this.addComponent(new fc.ComponentTransform);
-            this.animation = new fcaid.Node("Show", fc.Matrix4x4.IDENTITY());
+            this.animation = new fcaid.Node("Animation", fc.Matrix4x4.IDENTITY());
             this.appendChild(this.animation);
             this.animation.addComponent(new fc.ComponentMaterial(this.mtrAvatar));
             this.animation.addComponent(new fc.ComponentMesh(this.meshQuad));
+            this.animation.mtxLocal.translateZ(0.01);
             this.mtxLocal.translation = _position;
 
+            //this.rect = new fc.Rectangle(_position.x, _position.y, _size.x, _size.y, fc.ORIGIN2D.CENTER);
         }
 
-        public move(_translationY: number, _translationX: number, _dash: number, _rotation: number): void {
+        public moveAvatar(_translationY: number, _translationX: number, _dash: number, _rotation: number): void {
             let speedX: number = _translationX * 0.08;
             let speedY: number = _translationY * 0.08;
 
@@ -44,21 +49,25 @@ namespace PHE {
             }
             this.mtxLocal.translateX(speedX);
             this.mtxLocal.translateY(speedY);
+            // this.rect.position.x = this.mtxLocal.translation.x;
+            //this.rect.position.y = this.mtxLocal.translation.y;
+            this.rect.position.x = this.mtxLocal.translation.x - this.rect.size.x / 2;
+            this.rect.position.y = this.mtxLocal.translation.y - this.rect.size.y / 2;
             this.animation.mtxLocal.rotateZ(rotation);
         }
 
         /* public rotateTo(_mousePos: fc.Vector3): void {
-
+    
             let newMousePos: fc.Vector3 = fc.Vector3.DIFFERENCE(_mousePos, this.mtxLocal.translation);
-
+    
             console.log("_mousePos: " + _mousePos.toString());
-
+    
             console.log("newMousePos: " + newMousePos.toString());
-
+    
             console.log(this.animation.mtxLocal.rotation.z);
-
+    
             //controlRotation.setInput(angleRotation);
-
+    
         } */
     }
 }
