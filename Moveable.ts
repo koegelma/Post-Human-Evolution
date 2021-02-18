@@ -6,7 +6,7 @@ namespace PHE {
         xAxis, yAxis
     }
     export class Moveable extends GameObject {
-        
+
         public velocity: fc.Vector3 = fc.Vector3.ZERO();
 
         public constructor(_name: string, _size: fc.Vector3, _position: fc.Vector3) {
@@ -32,20 +32,34 @@ namespace PHE {
         /**
          * collides returns if the moveable itself collides with the _target
          */
-        public checkCollision(_target: GameObject): boolean {
+        public checkCollision(_target: GameObject, _name: string): boolean {
             let intersection: fc.Rectangle = this.rect.getIntersection(_target.rect);
             if (intersection == null)
                 return false;
 
-            if (intersection.size.x < intersection.size.y) {
-                this.hndCollision(_target, Axis.xAxis);
-            } else {
-                this.hndCollision(_target, Axis.yAxis);
+            if (_name === "avatar") {
+                if (intersection.size.x < intersection.size.y) {
+                    this.hndCollisionAvatar(_target, Axis.xAxis);
+                } else {
+                    this.hndCollisionAvatar(_target, Axis.yAxis);
+                }
             }
+
+            else if (_name === "enemy") {
+                if (intersection.size.x < intersection.size.y) {
+                    //console.log("Enemy collision");
+                    //this.hndCollisionAvatar(_target, Axis.xAxis);
+                } else {
+                   // console.log("Enemy collision");
+                    //this.hndCollisionAvatar(_target, Axis.yAxis);
+                }
+            }
+
+
             return true;
         }
 
-        public hndCollision(_target: GameObject, _axis: Axis): void {
+        public hndCollisionAvatar(_target: GameObject, _axis: Axis): void {
             if (_axis == Axis.xAxis) {
 
                 if (this.mtxLocal.translation.x < _target.mtxLocal.translation.x) {

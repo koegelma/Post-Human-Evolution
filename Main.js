@@ -4,6 +4,7 @@ var PHE;
     var fc = FudgeCore;
     //import fcaid = FudgeAid;
     window.addEventListener("load", hndLoad);
+    //export let hud: Hud;
     //let meshQuad: fc.MeshQuad = new fc.MeshQuad();
     //let white: fc.Material = new fc.Material("White", fc.ShaderUniColor, new fc.CoatColored(fc.Color.CSS("WHITE")));
     //let black: fc.Material = new fc.Material("Black", fc.ShaderUniColor, new fc.CoatColored(fc.Color.CSS("BLACK")));
@@ -15,7 +16,8 @@ var PHE;
     PHE.controlRotation = new fc.Control("AvatarControlRotation", 1, 0 /* PROPORTIONAL */);
     PHE.controlRotation.setDelay(80);
     let controlDash = new fc.Control("AvatarControlDash", 1, 0 /* PROPORTIONAL */);
-    //export let crc2: CanvasRenderingContext2D;
+    let controlShoot = new fc.Control("AvatarControlShoot", 1, 0 /* PROPORTIONAL */);
+    let controlReload = new fc.Control("AvatarControlReload", 1, 0 /* PROPORTIONAL */);
     //export let controlRotation: fc.Control = new fc.Control("RotationAngle", 1, fc.CONTROL_TYPE.PROPORTIONAL);
     function hndLoad(_event) {
         const canvas = document.querySelector("canvas");
@@ -33,8 +35,22 @@ var PHE;
         PHE.walls = createWalls();
         PHE.level.appendChild(PHE.walls);
         //Enemy
-        PHE.enemies = createEnemies();
+        PHE.enemies = createEnemies(10);
         PHE.level.appendChild(PHE.enemies);
+        //Audio
+        let audioShoot = new fc.Audio("../Assets/Audio/12-Gauge-Pump-Action-Shotgun.mp3");
+        PHE.cmpAudioShoot = new fc.ComponentAudio(audioShoot, false);
+        PHE.level.addComponent(PHE.cmpAudioShoot);
+        let audioReload = new fc.Audio("../Assets/Audio/Reloading-Magazine.mp3");
+        PHE.cmpAudioReload = new fc.ComponentAudio(audioReload, false);
+        PHE.level.addComponent(PHE.cmpAudioReload);
+        let audioAmbience = new fc.Audio("../Assets/Audio/zombie-ambience-background.mp3");
+        PHE.cmpAudioAmbience = new fc.ComponentAudio(audioAmbience, true);
+        PHE.level.addComponent(PHE.cmpAudioAmbience);
+        //cmpAudioAmbience.play(true);
+        PHE.avatar.addComponent(new fc.ComponentAudioListener);
+        fc.AudioManager.default.listenTo(PHE.root);
+        fc.AudioManager.default.listenWith(PHE.avatar.getComponent(fc.ComponentAudioListener));
         // Setup Camera
         let cmpCamera = new fc.ComponentCamera();
         cmpCamera.pivot.translateZ(18);
@@ -45,6 +61,7 @@ var PHE;
         PHE.viewport = new fc.Viewport();
         PHE.viewport.initialize("Viewport", PHE.root, cmpCamera, canvas);
         //crc2 = canvas.getContext("2d");
+        PHE.Hud.start();
         // EventListener
         //canvas.addEventListener("mousemove", hndMouse);
         fc.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, hndLoop);
@@ -52,12 +69,20 @@ var PHE;
     }
     function hndLoop(_event) {
         setControlInput();
-        PHE.avatar.moveAvatar(controlVertical.getOutput(), controlHorizontal.getOutput(), controlDash.getOutput(), PHE.controlRotation.getOutput());
+        PHE.avatar.moveAvatar(controlVertical.getOutput(), controlHorizontal.getOutput(), controlDash.getOutput(), PHE.controlRotation.getOutput(), controlShoot.getOutput(), controlReload.getOutput());
         //controlRotation.setInput(0);
         hndCollision();
         for (let enemy of PHE.enemies.getChildren()) {
-            enemy.moveEnemy();
+            enemy.update();
+            //enemy.checkCollision(avatar, "enemy");
+            /* for (let wall of walls.getChildren() as Wall[]) {
+                enemy.checkCollision(wall, "enemy");
+            } */
         }
+        fc.Time.game.setTimer(15000, 1, (_event) => {
+            //enemies = createEnemies(5);
+            // level.appendChild(enemies);
+        });
         PHE.viewport.draw();
         // crc2.fillRect(0, 0, 50, 50);
     }
@@ -69,6 +94,8 @@ var PHE;
         controlDash.setInput(fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.SHIFT_LEFT]));
         PHE.controlRotation.setInput(fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.ARROW_LEFT])
             + fc.Keyboard.mapToValue(-1, 0, [fc.KEYBOARD_CODE.ARROW_RIGHT]));
+        controlShoot.setInput(fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.SPACE]));
+        controlReload.setInput(fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.R]));
     }
     /*  function hndMouse(_event: MouseEvent): void {
          let mousePosClient: fc.Vector2 = new fc.Vector2(_event.clientX, _event.clientY);
@@ -86,7 +113,7 @@ var PHE;
      } */
     function hndCollision() {
         for (let wall of PHE.walls.getChildren()) {
-            PHE.avatar.checkCollision(wall);
+            PHE.avatar.checkCollision(wall, "avatar");
         }
     }
     function createWalls() {
@@ -113,21 +140,18 @@ var PHE;
         }
         return floor;
     }
-    function createEnemies() {
+    function createEnemies(_number) {
         let enemies = new fc.Node("Enemies");
         let txtZombie2 = new fc.TextureImage("../Assets/Zombie/attack01/attack01_0000.png");
         let mtrZombie2 = new fc.Material("MaterialEnemy", fc.ShaderTexture, new fc.CoatTextured(fc.Color.CSS("WHITE"), txtZombie2));
-        enemies.appendChild(new PHE.Enemy("Enemy1", new fc.Vector3(4.5, 4.5, 4.5), new fc.Vector3(fc.Random.default.getRange(-10, 16), fc.Random.default.getRange(-8, 8), 0), mtrZombie2));
-        enemies.appendChild(new PHE.Enemy("Enemy2", new fc.Vector3(4.5, 4.5, 4.5), new fc.Vector3(fc.Random.default.getRange(-10, 16), fc.Random.default.getRange(-8, 8), 0), mtrZombie2));
+        for (let index = 0; index < _number; index++) {
+            enemies.appendChild(new PHE.Enemy("Enemy" + index, new fc.Vector3(4, 4, 2), new fc.Vector3(fc.Random.default.getRange(-10, 16), fc.Random.default.getRange(-8, 8), 0), mtrZombie2));
+        }
         return enemies;
     }
 })(PHE || (PHE = {}));
 // TODO
-// - Bounce / Collision GameObject
-// - Sprites
 // - Enemies (State Machine)
-// - Dash verbessern
-// - Shooting
 // - Level Builder
 // - Items
 //# sourceMappingURL=Main.js.map

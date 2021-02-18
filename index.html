@@ -8,12 +8,15 @@
     <title>Post Human Evolution</title>
     <script src="FudgeCore\FudgeCore.js"></script>
     <script src="FudgeAid/FudgeAid.js"></script>
+    <script src="FudgeUserInterface/FudgeUserInterface.js"></script>
     <script src="GameObject.js"></script>
     <script src="Moveable.js"></script>
     <script src="Enemy.js"></script>
     <script src="Wall.js"></script>
     <script src="Avatar.js"></script>
     <script src="Floor.js"></script>
+    <script src="Bullet.js"></script>
+    <script src="Hud.js"></script>
     <script src="Main.js"></script>
 
     <style>
@@ -28,11 +31,40 @@
             width: 100vw;
             height: 100vh;
         }
+
+        div#hud {
+            position: absolute;
+            bottom: 0%;
+            left: 5%;
+            color: white;
+            font-size: large;
+            font-family:fantasy;
+           
+        }
+
+        input[type="number"] {
+            appearance: textfield;
+
+            font-size: 3em;
+            border: none;
+            background-color: rgba(0, 255, 255, 0);
+            color: rgb(4, 0, 255);
+            text-shadow: black 5px 5px;
+            width: 4em;
+            font-family:fantasy;
+        }
+
+      
     </style>
 </head>
 
 <body>
     <canvas></canvas>
+    <div id="hud" class="outerDIV">
+        Health: <input type="number" key="health" disabled />
+        Score: <input type="number" key="score" disabled />
+        Ammo: <input type="number" key="ammo" disabled />
+    </div>
 </body>
 
 </html>

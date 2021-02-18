@@ -11,7 +11,7 @@ var PHE;
             this.addComponent(cmpQuad);
             cmpQuad.pivot.scale(_size);
             this.mtxLocal.translation = _position;
-            //this.mtxPivot = this.getComponent(fc.ComponentMesh).pivot;
+            this.mtxPivot = this.getComponent(fc.ComponentMesh).pivot;
         }
     }
     GameObject.meshQuad = new fc.MeshSprite();

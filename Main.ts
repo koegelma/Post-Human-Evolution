@@ -12,6 +12,8 @@ namespace PHE {
     export let walls: fc.Node;
     export let floor: fc.Node;
     export let enemies: fc.Node;
+    export let bullet: Bullet;
+    //export let hud: Hud;
 
     //let meshQuad: fc.MeshQuad = new fc.MeshQuad();
     //let white: fc.Material = new fc.Material("White", fc.ShaderUniColor, new fc.CoatColored(fc.Color.CSS("WHITE")));
@@ -29,7 +31,15 @@ namespace PHE {
 
     let controlDash: fc.Control = new fc.Control("AvatarControlDash", 1, fc.CONTROL_TYPE.PROPORTIONAL);
 
-    //export let crc2: CanvasRenderingContext2D;
+    let controlShoot: fc.Control = new fc.Control("AvatarControlShoot", 1, fc.CONTROL_TYPE.PROPORTIONAL);
+
+    let controlReload: fc.Control = new fc.Control("AvatarControlReload", 1, fc.CONTROL_TYPE.PROPORTIONAL);
+
+    export let cmpAudioShoot: fc.ComponentAudio;
+    export let cmpAudioReload: fc.ComponentAudio;
+    export let cmpAudioAmbience: fc.ComponentAudio;
+
+
 
     //export let controlRotation: fc.Control = new fc.Control("RotationAngle", 1, fc.CONTROL_TYPE.PROPORTIONAL);
 
@@ -56,8 +66,26 @@ namespace PHE {
         level.appendChild(walls);
 
         //Enemy
-        enemies = createEnemies();
+        enemies = createEnemies(10);
         level.appendChild(enemies);
+
+        //Audio
+        let audioShoot: fc.Audio = new fc.Audio("../Assets/Audio/12-Gauge-Pump-Action-Shotgun.mp3");
+        cmpAudioShoot = new fc.ComponentAudio(audioShoot, false);
+        level.addComponent(cmpAudioShoot);
+
+        let audioReload: fc.Audio = new fc.Audio("../Assets/Audio/Reloading-Magazine.mp3");
+        cmpAudioReload = new fc.ComponentAudio(audioReload, false);
+        level.addComponent(cmpAudioReload);
+
+        let audioAmbience: fc.Audio = new fc.Audio("../Assets/Audio/zombie-ambience-background.mp3");
+        cmpAudioAmbience = new fc.ComponentAudio(audioAmbience, true);
+        level.addComponent(cmpAudioAmbience);
+        //cmpAudioAmbience.play(true);
+
+        avatar.addComponent(new fc.ComponentAudioListener);
+        fc.AudioManager.default.listenTo(root);
+        fc.AudioManager.default.listenWith(avatar.getComponent(fc.ComponentAudioListener));
 
 
         // Setup Camera
@@ -72,6 +100,8 @@ namespace PHE {
         viewport.initialize("Viewport", root, cmpCamera, canvas);
         //crc2 = canvas.getContext("2d");
 
+        Hud.start();
+
         // EventListener
         //canvas.addEventListener("mousemove", hndMouse);
         fc.Loop.addEventListener(fc.EVENT.LOOP_FRAME, hndLoop);
@@ -80,15 +110,24 @@ namespace PHE {
 
     function hndLoop(_event: Event): void {
         setControlInput();
-        avatar.moveAvatar(controlVertical.getOutput(), controlHorizontal.getOutput(), controlDash.getOutput(), controlRotation.getOutput());
+        avatar.moveAvatar(controlVertical.getOutput(), controlHorizontal.getOutput(), controlDash.getOutput(), controlRotation.getOutput(), controlShoot.getOutput(), controlReload.getOutput());
         //controlRotation.setInput(0);
 
         hndCollision();
 
         for (let enemy of enemies.getChildren() as Enemy[]) {
-            enemy.moveEnemy();
+            enemy.update();
+            //enemy.checkCollision(avatar, "enemy");
+            /* for (let wall of walls.getChildren() as Wall[]) {
+                enemy.checkCollision(wall, "enemy");
+            } */
         }
 
+
+        fc.Time.game.setTimer(15000, 1, (_event: fc.EventTimer) => {
+            //enemies = createEnemies(5);
+           // level.appendChild(enemies);
+        });
 
 
         viewport.draw();
@@ -112,6 +151,13 @@ namespace PHE {
             fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.ARROW_LEFT])
             + fc.Keyboard.mapToValue(-1, 0, [fc.KEYBOARD_CODE.ARROW_RIGHT])
         );
+        controlShoot.setInput(
+            fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.SPACE])
+        );
+
+        controlReload.setInput(
+            fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.R])
+        );
     }
 
     /*  function hndMouse(_event: MouseEvent): void {
@@ -131,7 +177,7 @@ namespace PHE {
 
     function hndCollision(): void {
         for (let wall of walls.getChildren() as Wall[]) {
-            avatar.checkCollision(wall);
+            avatar.checkCollision(wall, "avatar");
         }
     }
 
@@ -165,13 +211,14 @@ namespace PHE {
         return floor;
     }
 
-    function createEnemies(): fc.Node {
+    function createEnemies(_number: number): fc.Node {
         let enemies: fc.Node = new fc.Node("Enemies");
         let txtZombie2: fc.TextureImage = new fc.TextureImage("../Assets/Zombie/attack01/attack01_0000.png");
         let mtrZombie2: fc.Material = new fc.Material("MaterialEnemy", fc.ShaderTexture, new fc.CoatTextured(fc.Color.CSS("WHITE"), txtZombie2));
 
-        enemies.appendChild(new Enemy("Enemy1", new fc.Vector3(4.5, 4.5, 4.5), new fc.Vector3(fc.Random.default.getRange(-10, 16), fc.Random.default.getRange(-8, 8), 0), mtrZombie2));
-        enemies.appendChild(new Enemy("Enemy2", new fc.Vector3(4.5, 4.5, 4.5), new fc.Vector3(fc.Random.default.getRange(-10, 16), fc.Random.default.getRange(-8, 8), 0), mtrZombie2));
+        for (let index: number = 0; index < _number; index++) {
+            enemies.appendChild(new Enemy("Enemy" + index, new fc.Vector3(4, 4, 2), new fc.Vector3(fc.Random.default.getRange(-10, 16), fc.Random.default.getRange(-8, 8), 0), mtrZombie2));
+        }
         return enemies;
     }
 
@@ -180,11 +227,7 @@ namespace PHE {
 
 // TODO
 
-// - Bounce / Collision GameObject
-// - Sprites
 // - Enemies (State Machine)
-// - Dash verbessern
-// - Shooting
 // - Level Builder
 // - Items
 
