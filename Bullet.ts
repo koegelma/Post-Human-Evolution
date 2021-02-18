@@ -34,8 +34,7 @@ namespace PHE {
                     }
                 }
             }
-
-            //level.removeChild(bullet);
+            level.removeChild(bullet);
             return false;
         }
 

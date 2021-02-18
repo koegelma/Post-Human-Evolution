@@ -30,7 +30,7 @@ var PHE;
                     }
                 }
             }
-            //level.removeChild(bullet);
+            PHE.level.removeChild(PHE.bullet);
             return false;
         }
         translate(_distance) {

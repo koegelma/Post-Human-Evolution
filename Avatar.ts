@@ -49,7 +49,7 @@ namespace PHE {
                 speedY *= dashSpeed;
                 this.usedDash = true;
                 console.log("Dash was just used");
-                fc.Time.game.setTimer(2000, 1, (_event: fc.EventTimer) => {
+                fc.Time.game.setTimer(3000, 1, (_event: fc.EventTimer) => {
                     this.usedDash = false;
                     console.log("Dash can be used again");
                 });
@@ -60,8 +60,6 @@ namespace PHE {
 
             this.mtxLocal.translateX(speedX);
             this.mtxLocal.translateY(speedY);
-            // this.rect.position.x = this.mtxLocal.translation.x;
-            //this.rect.position.y = this.mtxLocal.translation.y;
             this.rect.position.x = this.mtxLocal.translation.x - this.rect.size.x / 2;
             this.rect.position.y = this.mtxLocal.translation.y - this.rect.size.y / 2;
             this.animation.mtxLocal.rotateZ(rotation);
@@ -72,7 +70,11 @@ namespace PHE {
                 fc.Time.game.setTimer(800, 1, (_event: fc.EventTimer) => {
                     this.shotReady = true;
                 });
+            } else if (_shoot == 1 && this.shotReady && gameState.ammo == 0) {
+                cmpAudioEmptyGun.play(true);
             }
+
+            
 
             if (_reload == 1) {
                 gameState.ammo = 15;
@@ -96,5 +98,21 @@ namespace PHE {
             bullet.shoot(shotDirection);
             gameState.ammo--;
         }
+/* 
+        public spawnEnemy(): boolean {
+
+            let timeUp: boolean = false;
+            fc.Time.game.setTimer(15000, 1, (_event: fc.EventTimer) => {
+                //enemies = createEnemies(5);
+                // level.appendChild(enemies);
+                timeUp = true;
+            });
+
+            if (timeUp) {
+                return true;
+            }
+
+            return false;
+        } */
     }
 }

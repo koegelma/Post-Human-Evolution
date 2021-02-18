@@ -38,8 +38,23 @@
             left: 5%;
             color: white;
             font-size: large;
-            font-family:fantasy;
-           
+            font-family: fantasy;
+
+        }
+
+        div#StartScreen {
+            max-width: 100%;
+            max-height: 100%;
+
+            cursor: pointer;
+            margin: 0 auto;
+            overflow: auto;
+            position: fixed;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+
+            object-fit: contain;
         }
 
         input[type="number"] {
@@ -51,15 +66,21 @@
             color: rgb(4, 0, 255);
             text-shadow: black 5px 5px;
             width: 4em;
-            font-family:fantasy;
+            font-family: fantasy;
         }
-
-      
     </style>
 </head>
 
 <body>
-    <canvas></canvas>
+    <div id="StartScreen">
+        <img src="Assets/StartScreen.png" />
+    </div>
+
+    <canvas>
+        <div id="GameOver">
+            <img src="Assets/GameOver.png" />
+        </div>
+    </canvas>
     <div id="hud" class="outerDIV">
         Health: <input type="number" key="health" disabled />
         Score: <input type="number" key="score" disabled />

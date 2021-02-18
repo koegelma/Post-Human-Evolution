@@ -2,7 +2,7 @@ namespace PHE {
     import fc = FudgeCore;
     //import fcaid = FudgeAid;
 
-    window.addEventListener("load", hndLoad);
+    window.addEventListener("load", start);
 
     export let viewport: fc.Viewport;
 
@@ -13,7 +13,7 @@ namespace PHE {
     export let floor: fc.Node;
     export let enemies: fc.Node;
     export let bullet: Bullet;
-    //export let hud: Hud;
+    export let enemy: Enemy;
 
     //let meshQuad: fc.MeshQuad = new fc.MeshQuad();
     //let white: fc.Material = new fc.Material("White", fc.ShaderUniColor, new fc.CoatColored(fc.Color.CSS("WHITE")));
@@ -22,78 +22,51 @@ namespace PHE {
 
     let controlVertical: fc.Control = new fc.Control("AvatarControlVertical", 1, fc.CONTROL_TYPE.PROPORTIONAL);
     controlVertical.setDelay(80);
-
     let controlHorizontal: fc.Control = new fc.Control("AvatarControlHorizontal", 1, fc.CONTROL_TYPE.PROPORTIONAL);
     controlHorizontal.setDelay(80);
-
     export let controlRotation: fc.Control = new fc.Control("AvatarControlRotation", 1, fc.CONTROL_TYPE.PROPORTIONAL);
     controlRotation.setDelay(80);
-
     let controlDash: fc.Control = new fc.Control("AvatarControlDash", 1, fc.CONTROL_TYPE.PROPORTIONAL);
-
     let controlShoot: fc.Control = new fc.Control("AvatarControlShoot", 1, fc.CONTROL_TYPE.PROPORTIONAL);
-
     let controlReload: fc.Control = new fc.Control("AvatarControlReload", 1, fc.CONTROL_TYPE.PROPORTIONAL);
 
     export let cmpAudioShoot: fc.ComponentAudio;
     export let cmpAudioReload: fc.ComponentAudio;
     export let cmpAudioAmbience: fc.ComponentAudio;
+    export let cmpAudioEmptyGun: fc.ComponentAudio;
+    export let cmpAudioZombie1: fc.ComponentAudio;
+    export let cmpAudioZombie2: fc.ComponentAudio;
+    let cmpAudioSoundtrack: fc.ComponentAudio;
 
+    let canvas: HTMLCanvasElement;
+    let cmpCamera: fc.ComponentCamera;
 
-
-    //export let controlRotation: fc.Control = new fc.Control("RotationAngle", 1, fc.CONTROL_TYPE.PROPORTIONAL);
-
-    function hndLoad(_event: Event): void {
-
-        const canvas: HTMLCanvasElement = document.querySelector("canvas");
-
+    function start(_event: Event): void {
         root = new fc.Node("Root");
         root.addComponent(new fc.ComponentTransform());
 
-        level = new fc.Node("Level");
-        root.appendChild(level);
-
-        //Floor
-        floor = createFloor();
-        level.appendChild(floor);
-
-        // Avatar
-        avatar = new Avatar("Avatar", new fc.Vector3(1, 1, 2), new fc.Vector3(-15, 0, 0));
-        root.appendChild(avatar);
-
-        // Walls
-        walls = createWalls();
-        level.appendChild(walls);
-
-        //Enemy
-        enemies = createEnemies(10);
-        level.appendChild(enemies);
-
-        //Audio
-        let audioShoot: fc.Audio = new fc.Audio("../Assets/Audio/12-Gauge-Pump-Action-Shotgun.mp3");
-        cmpAudioShoot = new fc.ComponentAudio(audioShoot, false);
-        level.addComponent(cmpAudioShoot);
-
-        let audioReload: fc.Audio = new fc.Audio("../Assets/Audio/Reloading-Magazine.mp3");
-        cmpAudioReload = new fc.ComponentAudio(audioReload, false);
-        level.addComponent(cmpAudioReload);
-
-        let audioAmbience: fc.Audio = new fc.Audio("../Assets/Audio/zombie-ambience-background.mp3");
-        cmpAudioAmbience = new fc.ComponentAudio(audioAmbience, true);
-        level.addComponent(cmpAudioAmbience);
-        //cmpAudioAmbience.play(true);
-
-        avatar.addComponent(new fc.ComponentAudioListener);
+        let listener: ƒ.ComponentAudioListener = new ƒ.ComponentAudioListener();
         fc.AudioManager.default.listenTo(root);
-        fc.AudioManager.default.listenWith(avatar.getComponent(fc.ComponentAudioListener));
+        fc.AudioManager.default.listenWith(listener);
 
+        let audioSoundtrack: fc.Audio = new fc.Audio("../Assets/Audio/soundtrack.mp3");
+        cmpAudioSoundtrack = new fc.ComponentAudio(audioSoundtrack, true);
+        root.addComponent(cmpAudioSoundtrack);
+        cmpAudioSoundtrack.play(true);
 
-        // Setup Camera
-        let cmpCamera: fc.ComponentCamera = new fc.ComponentCamera();
-        cmpCamera.pivot.translateZ(18);
-        cmpCamera.pivot.rotateY(180);
-        cmpCamera.backgroundColor = fc.Color.CSS("black");
-        avatar.addComponent(cmpCamera);
+        let div: HTMLDivElement = document.querySelector("div#StartScreen");
+        div.addEventListener("click", () => {
+            div.style.display = "none";
+            cmpAudioSoundtrack.play(false);
+            hndLoad();
+        });
+    }
+
+    function hndLoad(): void {
+
+        canvas = document.querySelector("canvas");
+
+        setupLevel();
 
         // Setup Viewport
         viewport = new fc.Viewport();
@@ -117,22 +90,63 @@ namespace PHE {
 
         for (let enemy of enemies.getChildren() as Enemy[]) {
             enemy.update();
-            //enemy.checkCollision(avatar, "enemy");
-            /* for (let wall of walls.getChildren() as Wall[]) {
-                enemy.checkCollision(wall, "enemy");
-            } */
         }
 
-
-        fc.Time.game.setTimer(15000, 1, (_event: fc.EventTimer) => {
-            //enemies = createEnemies(5);
-           // level.appendChild(enemies);
-        });
-
+        if (gameState.health <= 0) {
+            newLevel();
+        }
 
         viewport.draw();
+    }
 
-        // crc2.fillRect(0, 0, 50, 50);
+    function setupLevel(): void {
+        level = new fc.Node("Level");
+        root.appendChild(level);
+
+        // Avatar
+        avatar = new Avatar("Avatar", new fc.Vector3(1, 1, 2), new fc.Vector3(-15, 0, 0));
+        level.appendChild(avatar);
+
+        //Floor
+        floor = createFloor();
+        level.appendChild(floor);
+
+        // Walls
+        walls = createWalls();
+        level.appendChild(walls);
+
+        //Enemy
+        enemies = createEnemies(10);
+        level.appendChild(enemies);
+
+        //Audio
+        setupAudio();
+
+        // Setup Camera
+        cmpCamera = new fc.ComponentCamera();
+        cmpCamera.pivot.translateZ(18);
+        cmpCamera.pivot.rotateY(180);
+        cmpCamera.backgroundColor = fc.Color.CSS("black");
+        avatar.addComponent(cmpCamera);
+    }
+
+    function newLevel(): void {
+        root.removeAllChildren();
+        avatar.removeAllChildren();
+
+       /*  let div: HTMLDivElement = document.querySelector("div#GameOver");
+        div.addEventListener("click", () => {
+            div.style.display = "none";
+            newLevel();
+        }); */
+
+        setupLevel();
+        gameState.health = 100;
+        gameState.ammo = 15;
+        gameState.score = 0;
+
+        viewport = new fc.Viewport();
+        viewport.initialize("Viewport", root, cmpCamera, canvas);
     }
 
     function setControlInput(): void {
@@ -160,21 +174,6 @@ namespace PHE {
         );
     }
 
-    /*  function hndMouse(_event: MouseEvent): void {
-         let mousePosClient: fc.Vector2 = new fc.Vector2(_event.clientX, _event.clientY);
-         let mousePos3DClient: fc.Vector3 = new fc.Vector3(_event.clientX, _event.clientY, 0);
-         console.log("X: " + _event.clientX + "\nY: " + _event.clientY);
- 
-         let normal: fc.Vector3 = floor.mtxWorld.getZ();
-         //let normal: fc.Vector3 = new fc.Vector3(0, 0, 1);
-         let mousePosWorld: fc.Vector3 = viewport.getRayFromClient(mousePosClient).intersectPlane(mousePos3DClient, normal);
- 
- 
- 
-       //  avatar.rotateTo(mousePosWorld);
- 
-     } */
-
     function hndCollision(): void {
         for (let wall of walls.getChildren() as Wall[]) {
             avatar.checkCollision(wall, "avatar");
@@ -183,7 +182,6 @@ namespace PHE {
 
     function createWalls(): fc.Node {
         let walls: fc.Node = new fc.Node("Walls");
-        //walls.appendChild(new Wall(new fc.Vector2(0.5, 20.5), new fc.Vector3(-18, 0, 0), white));
 
         for (let i: number = 0; i < 21; i += 0.5) {
             walls.appendChild(new Wall(new fc.Vector3(0.5, i, 2), new fc.Vector3(-18, 0, 0), grey));
@@ -220,6 +218,33 @@ namespace PHE {
             enemies.appendChild(new Enemy("Enemy" + index, new fc.Vector3(4, 4, 2), new fc.Vector3(fc.Random.default.getRange(-10, 16), fc.Random.default.getRange(-8, 8), 0), mtrZombie2));
         }
         return enemies;
+    }
+
+    function setupAudio(): void {
+        let audioShoot: fc.Audio = new fc.Audio("../Assets/Audio/12-Gauge-Pump-Action-Shotgun.mp3");
+        cmpAudioShoot = new fc.ComponentAudio(audioShoot, false);
+        level.addComponent(cmpAudioShoot);
+
+        let audioReload: fc.Audio = new fc.Audio("../Assets/Audio/Reloading-Magazine.mp3");
+        cmpAudioReload = new fc.ComponentAudio(audioReload, false);
+        level.addComponent(cmpAudioReload);
+
+        let audioEmptyGun: fc.Audio = new fc.Audio("../Assets/Audio/empty-gun.mp3");
+        cmpAudioEmptyGun = new fc.ComponentAudio(audioEmptyGun, false);
+        level.addComponent(cmpAudioEmptyGun);
+
+        let audioAmbience: fc.Audio = new fc.Audio("../Assets/Audio/zombie-ambience-background.mp3");
+        cmpAudioAmbience = new fc.ComponentAudio(audioAmbience, true);
+        level.addComponent(cmpAudioAmbience);
+        cmpAudioAmbience.play(true);
+
+        let audioZombie1: fc.Audio = new fc.Audio("../Assets/Audio/zombie-bite-1.mp3");
+        cmpAudioZombie1 = new fc.ComponentAudio(audioZombie1, false);
+        level.addComponent(cmpAudioZombie1);
+
+        let audioZombie2: fc.Audio = new fc.Audio("../Assets/Audio/zombie-bite-2.mp3");
+        cmpAudioZombie2 = new fc.ComponentAudio(audioZombie2, false);
+        level.addComponent(cmpAudioZombie2);
     }
 
 
