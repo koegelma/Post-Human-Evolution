@@ -9,7 +9,6 @@ namespace PHE {
 
       let cmpMaterial: fc.ComponentMaterial = new fc.ComponentMaterial(_material);
       this.addComponent(cmpMaterial);
-      //this.rect = new fc.Rectangle(_position.x, _position.y, _size.x, _size.y, fc.ORIGIN2D.CENTER);
     }
   }
 }

@@ -2,24 +2,23 @@
 var PHE;
 (function (PHE) {
     var fc = FudgeCore;
-    //import fcaid = FudgeAid;
-    window.addEventListener("load", start);
-    //let meshQuad: fc.MeshQuad = new fc.MeshQuad();
-    //let white: fc.Material = new fc.Material("White", fc.ShaderUniColor, new fc.CoatColored(fc.Color.CSS("WHITE")));
-    //let black: fc.Material = new fc.Material("Black", fc.ShaderUniColor, new fc.CoatColored(fc.Color.CSS("BLACK")));
     let grey = new fc.Material("Grey", fc.ShaderUniColor, new fc.CoatColored(fc.Color.CSS("DarkGrey")));
-    let controlVertical = new fc.Control("AvatarControlVertical", 1, 0 /* PROPORTIONAL */);
-    controlVertical.setDelay(80);
-    let controlHorizontal = new fc.Control("AvatarControlHorizontal", 1, 0 /* PROPORTIONAL */);
-    controlHorizontal.setDelay(80);
+    PHE.controlVertical = new fc.Control("AvatarControlVertical", 1, 0 /* PROPORTIONAL */);
+    PHE.controlVertical.setDelay(80);
+    PHE.controlHorizontal = new fc.Control("AvatarControlHorizontal", 1, 0 /* PROPORTIONAL */);
+    PHE.controlHorizontal.setDelay(80);
     PHE.controlRotation = new fc.Control("AvatarControlRotation", 1, 0 /* PROPORTIONAL */);
     PHE.controlRotation.setDelay(80);
     let controlDash = new fc.Control("AvatarControlDash", 1, 0 /* PROPORTIONAL */);
     let controlShoot = new fc.Control("AvatarControlShoot", 1, 0 /* PROPORTIONAL */);
     let controlReload = new fc.Control("AvatarControlReload", 1, 0 /* PROPORTIONAL */);
     let cmpAudioSoundtrack;
+    let cmpAudioAmbience;
     let canvas;
     let cmpCamera;
+    let timer = true;
+    let enemySpawnTime = 5000;
+    window.addEventListener("load", start);
     function start(_event) {
         PHE.root = new fc.Node("Root");
         PHE.root.addComponent(new fc.ComponentTransform());
@@ -33,7 +32,7 @@ var PHE;
         let div = document.querySelector("div#StartScreen");
         div.addEventListener("click", () => {
             div.style.display = "none";
-            cmpAudioSoundtrack.play(false);
+            //cmpAudioSoundtrack.play(false);
             hndLoad();
         });
     }
@@ -43,25 +42,45 @@ var PHE;
         // Setup Viewport
         PHE.viewport = new fc.Viewport();
         PHE.viewport.initialize("Viewport", PHE.root, cmpCamera, canvas);
-        //crc2 = canvas.getContext("2d");
         PHE.Hud.start();
-        // EventListener
-        //canvas.addEventListener("mousemove", hndMouse);
         fc.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, hndLoop);
         fc.Loop.start(fc.LOOP_MODE.TIME_GAME, 60);
     }
     function hndLoop(_event) {
         setControlInput();
-        PHE.avatar.moveAvatar(controlVertical.getOutput(), controlHorizontal.getOutput(), controlDash.getOutput(), PHE.controlRotation.getOutput(), controlShoot.getOutput(), controlReload.getOutput());
+        PHE.avatar.moveAvatar(PHE.controlVertical.getOutput(), PHE.controlHorizontal.getOutput(), controlDash.getOutput(), PHE.controlRotation.getOutput(), controlShoot.getOutput(), controlReload.getOutput());
         //controlRotation.setInput(0);
         hndCollision();
         for (let enemy of PHE.enemies.getChildren()) {
             enemy.update();
         }
+        increaseEnemys();
         if (PHE.gameState.health <= 0) {
+            PHE.level.removeChild(PHE.enemies);
+            if (PHE.gameState.highscore < PHE.gameState.score) {
+                PHE.gameState.highscore = PHE.gameState.score;
+            }
             newLevel();
         }
         PHE.viewport.draw();
+    }
+    function increaseEnemys() {
+        if (timer) {
+            timer = false;
+            fc.Time.game.setTimer(enemySpawnTime, 1, (_event) => {
+                spawnEnemy();
+                //console.log("Test Timer");
+                timer = true;
+                if (enemySpawnTime > 200) {
+                    enemySpawnTime -= 100;
+                }
+            });
+        }
+    }
+    function spawnEnemy() {
+        let txtZombie2 = new fc.TextureImage("../Assets/Zombie/attack01/attack01_0000.png");
+        let mtrZombie2 = new fc.Material("MaterialEnemy", fc.ShaderTexture, new fc.CoatTextured(fc.Color.CSS("WHITE"), txtZombie2));
+        PHE.enemies.appendChild(new PHE.Enemy("Enemy", new fc.Vector3(4, 4, 2), new fc.Vector3(fc.Random.default.getRange(-10, 16), fc.Random.default.getRange(-8, 8), 0), mtrZombie2));
     }
     function setupLevel() {
         PHE.level = new fc.Node("Level");
@@ -90,11 +109,6 @@ var PHE;
     function newLevel() {
         PHE.root.removeAllChildren();
         PHE.avatar.removeAllChildren();
-        /*  let div: HTMLDivElement = document.querySelector("div#GameOver");
-         div.addEventListener("click", () => {
-             div.style.display = "none";
-             newLevel();
-         }); */
         setupLevel();
         PHE.gameState.health = 100;
         PHE.gameState.ammo = 15;
@@ -103,9 +117,9 @@ var PHE;
         PHE.viewport.initialize("Viewport", PHE.root, cmpCamera, canvas);
     }
     function setControlInput() {
-        controlVertical.setInput(fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.W])
+        PHE.controlVertical.setInput(fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.W])
             + fc.Keyboard.mapToValue(-1, 0, [fc.KEYBOARD_CODE.S]));
-        controlHorizontal.setInput(fc.Keyboard.mapToValue(-1, 0, [fc.KEYBOARD_CODE.A])
+        PHE.controlHorizontal.setInput(fc.Keyboard.mapToValue(-1, 0, [fc.KEYBOARD_CODE.A])
             + fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.D]));
         controlDash.setInput(fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.SHIFT_LEFT]));
         PHE.controlRotation.setInput(fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.ARROW_LEFT])
@@ -161,9 +175,9 @@ var PHE;
         PHE.cmpAudioEmptyGun = new fc.ComponentAudio(audioEmptyGun, false);
         PHE.level.addComponent(PHE.cmpAudioEmptyGun);
         let audioAmbience = new fc.Audio("../Assets/Audio/zombie-ambience-background.mp3");
-        PHE.cmpAudioAmbience = new fc.ComponentAudio(audioAmbience, true);
-        PHE.level.addComponent(PHE.cmpAudioAmbience);
-        PHE.cmpAudioAmbience.play(true);
+        cmpAudioAmbience = new fc.ComponentAudio(audioAmbience, true);
+        PHE.level.addComponent(cmpAudioAmbience);
+        cmpAudioAmbience.play(true);
         let audioZombie1 = new fc.Audio("../Assets/Audio/zombie-bite-1.mp3");
         PHE.cmpAudioZombie1 = new fc.ComponentAudio(audioZombie1, false);
         PHE.level.addComponent(PHE.cmpAudioZombie1);
@@ -172,8 +186,4 @@ var PHE;
         PHE.level.addComponent(PHE.cmpAudioZombie2);
     }
 })(PHE || (PHE = {}));
-// TODO
-// - Enemies (State Machine)
-// - Level Builder
-// - Items
 //# sourceMappingURL=Main.js.map

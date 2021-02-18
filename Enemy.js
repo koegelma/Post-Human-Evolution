@@ -35,7 +35,7 @@ var PHE;
         }
         update() {
             this.moveEnemy();
-            if (this.checkCollision(PHE.avatar, "enemy") && PHE.gameState.health > 0) {
+            if (this.checkCollision(PHE.avatar, null) && PHE.gameState.health > 0) {
                 PHE.gameState.health -= 5;
                 this.mtxLocal.translateX(-2);
                 this.rect.position.x = this.mtxLocal.translation.x - this.rect.size.x / 2;
@@ -54,11 +54,7 @@ var PHE;
             }
         }
         moveEnemy() {
-            /*  fc.Time.game.setTimer(5000, 1, (_event: fc.EventTimer) => {
-                 this.rotateNow = true;
-             }); */
             if (this.vectorAmount(fc.Vector3.DIFFERENCE(PHE.avatar.mtxLocal.translation, this.mtxLocal.translation)) < 8 && this.vectorAmount(fc.Vector3.DIFFERENCE(PHE.avatar.mtxLocal.translation, this.mtxLocal.translation)) > 1) {
-                //console.log(this.mtxLocal.rotation.z);
                 this.rotateToAvatar();
                 this.mtxLocal.translateX(this.speed * fc.Loop.timeFrameGame / 1000);
                 this.rect.position.x = this.mtxLocal.translation.x - this.rect.size.x / 2;
@@ -66,13 +62,10 @@ var PHE;
             }
         }
         rotateToAvatar() {
-            // Vektor animation
-            let vectorA3D = fc.Vector3.DIFFERENCE(PHE.avatar.mtxLocal.translation, this.mtxLocal.translation);
-            let vectorA = new fc.Vector3(vectorA3D.x, vectorA3D.y, 0);
-            // Vektor normieren:
+            let vectorAnimation3D = fc.Vector3.DIFFERENCE(PHE.avatar.mtxLocal.translation, this.mtxLocal.translation);
+            let vectorAnimation = new fc.Vector3(vectorAnimation3D.x, vectorAnimation3D.y, 0);
             // let xCoordNorm: number = (1 / this.vectorAmount(vectorA)) * vectorA.x;
-            let yCoordNorm = (1 / this.vectorAmount(vectorA)) * vectorA.y;
-            // Winkel berechnen
+            let yCoordNorm = (1 / this.vectorAmount(vectorAnimation)) * vectorAnimation.y;
             let angle;
             angle = Math.acos(yCoordNorm) * 180 / Math.PI;
             angle += 90;

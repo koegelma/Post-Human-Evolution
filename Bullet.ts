@@ -3,25 +3,17 @@ namespace PHE {
 
     export class Bullet extends Moveable {
 
-        //public speed: number = 5;
         public velocity: fc.Vector3 = fc.Vector3.ZERO();
         public grey: fc.Material = new fc.Material("Grey", fc.ShaderUniColor, new fc.CoatColored(fc.Color.CSS("GREY")));
 
         public constructor(_name: string, _size: fc.Vector3, _position: fc.Vector3) {
             super("Bullet", _size, _position);
-            //this.velocity = new fc.Vector3(fc.Random.default.getRange(-1, 1), fc.Random.default.getRange(-1, 1), 1);
-            //this.velocity.normalize(this.speed);
             let cmpMaterial: fc.ComponentMaterial = new fc.ComponentMaterial(this.grey);
             this.addComponent(cmpMaterial);
         }
 
-
         public shoot(_velocity: fc.Vector3): boolean {
             this.velocity = _velocity;
-            //let distance: fc.Vector3 = fc.Vector3.SCALE(this.velocity, this.speed);
-            //this.translate(distance);
-
-            //this.mtxLocal.translateX(this.speed * fc.Loop.timeFrameGame / 1000);
             for (let speed: number = 1; speed <= 1.05; speed += 0.01) {
                 let distance: fc.Vector3 = fc.Vector3.SCALE(this.velocity, speed);
                 this.translate(distance);

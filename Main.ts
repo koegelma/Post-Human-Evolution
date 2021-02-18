@@ -1,11 +1,6 @@
 namespace PHE {
     import fc = FudgeCore;
-    //import fcaid = FudgeAid;
-
-    window.addEventListener("load", start);
-
     export let viewport: fc.Viewport;
-
     export let root: fc.Node;
     export let level: fc.Node;
     export let avatar: Avatar;
@@ -15,14 +10,11 @@ namespace PHE {
     export let bullet: Bullet;
     export let enemy: Enemy;
 
-    //let meshQuad: fc.MeshQuad = new fc.MeshQuad();
-    //let white: fc.Material = new fc.Material("White", fc.ShaderUniColor, new fc.CoatColored(fc.Color.CSS("WHITE")));
-    //let black: fc.Material = new fc.Material("Black", fc.ShaderUniColor, new fc.CoatColored(fc.Color.CSS("BLACK")));
     let grey: fc.Material = new fc.Material("Grey", fc.ShaderUniColor, new fc.CoatColored(fc.Color.CSS("DarkGrey")));
 
-    let controlVertical: fc.Control = new fc.Control("AvatarControlVertical", 1, fc.CONTROL_TYPE.PROPORTIONAL);
+    export let controlVertical: fc.Control = new fc.Control("AvatarControlVertical", 1, fc.CONTROL_TYPE.PROPORTIONAL);
     controlVertical.setDelay(80);
-    let controlHorizontal: fc.Control = new fc.Control("AvatarControlHorizontal", 1, fc.CONTROL_TYPE.PROPORTIONAL);
+    export let controlHorizontal: fc.Control = new fc.Control("AvatarControlHorizontal", 1, fc.CONTROL_TYPE.PROPORTIONAL);
     controlHorizontal.setDelay(80);
     export let controlRotation: fc.Control = new fc.Control("AvatarControlRotation", 1, fc.CONTROL_TYPE.PROPORTIONAL);
     controlRotation.setDelay(80);
@@ -32,14 +24,19 @@ namespace PHE {
 
     export let cmpAudioShoot: fc.ComponentAudio;
     export let cmpAudioReload: fc.ComponentAudio;
-    export let cmpAudioAmbience: fc.ComponentAudio;
     export let cmpAudioEmptyGun: fc.ComponentAudio;
     export let cmpAudioZombie1: fc.ComponentAudio;
     export let cmpAudioZombie2: fc.ComponentAudio;
     let cmpAudioSoundtrack: fc.ComponentAudio;
+    let cmpAudioAmbience: fc.ComponentAudio;
 
     let canvas: HTMLCanvasElement;
     let cmpCamera: fc.ComponentCamera;
+
+    let timer: boolean = true;
+    let enemySpawnTime: number = 5000;
+
+    window.addEventListener("load", start);
 
     function start(_event: Event): void {
         root = new fc.Node("Root");
@@ -57,7 +54,7 @@ namespace PHE {
         let div: HTMLDivElement = document.querySelector("div#StartScreen");
         div.addEventListener("click", () => {
             div.style.display = "none";
-            cmpAudioSoundtrack.play(false);
+            //cmpAudioSoundtrack.play(false);
             hndLoad();
         });
     }
@@ -71,12 +68,9 @@ namespace PHE {
         // Setup Viewport
         viewport = new fc.Viewport();
         viewport.initialize("Viewport", root, cmpCamera, canvas);
-        //crc2 = canvas.getContext("2d");
 
         Hud.start();
-
-        // EventListener
-        //canvas.addEventListener("mousemove", hndMouse);
+       
         fc.Loop.addEventListener(fc.EVENT.LOOP_FRAME, hndLoop);
         fc.Loop.start(fc.LOOP_MODE.TIME_GAME, 60);
     }
@@ -92,11 +86,37 @@ namespace PHE {
             enemy.update();
         }
 
+        increaseEnemys();
+
         if (gameState.health <= 0) {
+            level.removeChild(enemies);
+            if (gameState.highscore < gameState.score) {
+                gameState.highscore = gameState.score;
+            }
             newLevel();
         }
-
         viewport.draw();
+    }
+
+    function increaseEnemys(): void {
+
+        if (timer) {
+            timer = false;
+            fc.Time.game.setTimer(enemySpawnTime, 1, (_event: fc.EventTimer) => {
+                spawnEnemy();
+                //console.log("Test Timer");
+                timer = true;
+                if (enemySpawnTime > 200) {
+                    enemySpawnTime -= 100;
+                }
+            });
+        }
+    }
+
+    function spawnEnemy(): void {
+        let txtZombie2: fc.TextureImage = new fc.TextureImage("../Assets/Zombie/attack01/attack01_0000.png");
+        let mtrZombie2: fc.Material = new fc.Material("MaterialEnemy", fc.ShaderTexture, new fc.CoatTextured(fc.Color.CSS("WHITE"), txtZombie2));
+        enemies.appendChild(new Enemy("Enemy", new fc.Vector3(4, 4, 2), new fc.Vector3(fc.Random.default.getRange(-10, 16), fc.Random.default.getRange(-8, 8), 0), mtrZombie2));
     }
 
     function setupLevel(): void {
@@ -133,12 +153,6 @@ namespace PHE {
     function newLevel(): void {
         root.removeAllChildren();
         avatar.removeAllChildren();
-
-       /*  let div: HTMLDivElement = document.querySelector("div#GameOver");
-        div.addEventListener("click", () => {
-            div.style.display = "none";
-            newLevel();
-        }); */
 
         setupLevel();
         gameState.health = 100;
@@ -192,7 +206,6 @@ namespace PHE {
             walls.appendChild(new Wall(new fc.Vector3(i, 0.5, 2), new fc.Vector3(0, 10, 0), grey));
             walls.appendChild(new Wall(new fc.Vector3(i, 0.5, 2), new fc.Vector3(0, -10, 0), grey));
         }
-
         return walls;
     }
 
@@ -249,10 +262,4 @@ namespace PHE {
 
 
 }
-
-// TODO
-
-// - Enemies (State Machine)
-// - Level Builder
-// - Items
 

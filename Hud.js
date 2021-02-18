@@ -9,6 +9,7 @@ var PHE;
             this.health = 100;
             this.score = 0;
             this.ammo = 15;
+            this.highscore = 0;
         }
         reduceMutator(_mutator) { }
     }

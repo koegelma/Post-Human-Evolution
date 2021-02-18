@@ -14,9 +14,6 @@ namespace PHE {
             this.velocity = fc.Vector3.ZERO();
         }
 
-        /**
-         * move moves the game object and the collision detection reactangle
-         */
         public move(): void {
             let frameTime: number = fc.Loop.timeFrameGame / 1000;
             let distance: fc.Vector3 = fc.Vector3.SCALE(this.velocity, frameTime);
@@ -29,9 +26,6 @@ namespace PHE {
             this.rect.position.y = this.mtxLocal.translation.y - this.rect.size.y / 2;
         }
 
-        /**
-         * collides returns if the moveable itself collides with the _target
-         */
         public checkCollision(_target: GameObject, _name: string): boolean {
             let intersection: fc.Rectangle = this.rect.getIntersection(_target.rect);
             if (intersection == null)
@@ -44,22 +38,10 @@ namespace PHE {
                     this.hndCollisionAvatar(_target, Axis.yAxis);
                 }
             }
-
-            else if (_name === "enemy") {
-                if (intersection.size.x < intersection.size.y) {
-                    //console.log("Enemy collision");
-                    //this.hndCollisionAvatar(_target, Axis.xAxis);
-                } else {
-                   // console.log("Enemy collision");
-                    //this.hndCollisionAvatar(_target, Axis.yAxis);
-                }
-            }
-
-
             return true;
         }
 
-        public hndCollisionAvatar(_target: GameObject, _axis: Axis): void {
+        private hndCollisionAvatar(_target: GameObject, _axis: Axis): void {
             if (_axis == Axis.xAxis) {
 
                 if (this.mtxLocal.translation.x < _target.mtxLocal.translation.x) {

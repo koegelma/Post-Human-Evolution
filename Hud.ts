@@ -6,6 +6,7 @@ namespace PHE {
     public health: number = 100;
     public score: number = 0;
     public ammo: number = 15;
+    public highscore: number = 0;
     protected reduceMutator(_mutator: fc.Mutator): void {/* */ }
   }
 

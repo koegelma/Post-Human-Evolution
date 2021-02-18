@@ -13,9 +13,6 @@ var PHE;
             this.velocity = fc.Vector3.ZERO();
             this.velocity = fc.Vector3.ZERO();
         }
-        /**
-         * move moves the game object and the collision detection reactangle
-         */
         move() {
             let frameTime = fc.Loop.timeFrameGame / 1000;
             let distance = fc.Vector3.SCALE(this.velocity, frameTime);
@@ -26,9 +23,6 @@ var PHE;
             this.rect.position.x = this.mtxLocal.translation.x - this.rect.size.x / 2;
             this.rect.position.y = this.mtxLocal.translation.y - this.rect.size.y / 2;
         }
-        /**
-         * collides returns if the moveable itself collides with the _target
-         */
         checkCollision(_target, _name) {
             let intersection = this.rect.getIntersection(_target.rect);
             if (intersection == null)
@@ -39,16 +33,6 @@ var PHE;
                 }
                 else {
                     this.hndCollisionAvatar(_target, Axis.yAxis);
-                }
-            }
-            else if (_name === "enemy") {
-                if (intersection.size.x < intersection.size.y) {
-                    //console.log("Enemy collision");
-                    //this.hndCollisionAvatar(_target, Axis.xAxis);
-                }
-                else {
-                    // console.log("Enemy collision");
-                    //this.hndCollisionAvatar(_target, Axis.yAxis);
                 }
             }
             return true;

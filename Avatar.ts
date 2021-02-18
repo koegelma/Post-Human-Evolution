@@ -82,7 +82,7 @@ namespace PHE {
             }
         }
 
-        public shoot(): void {
+        private shoot(): void {
 
             let shotDirection: fc.Vector3 = this.animation.mtxWorld.getX();
 
@@ -98,21 +98,6 @@ namespace PHE {
             bullet.shoot(shotDirection);
             gameState.ammo--;
         }
-/* 
-        public spawnEnemy(): boolean {
 
-            let timeUp: boolean = false;
-            fc.Time.game.setTimer(15000, 1, (_event: fc.EventTimer) => {
-                //enemies = createEnemies(5);
-                // level.appendChild(enemies);
-                timeUp = true;
-            });
-
-            if (timeUp) {
-                return true;
-            }
-
-            return false;
-        } */
     }
 }
