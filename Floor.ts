@@ -8,6 +8,7 @@ namespace PHE {
 
       let cmpMaterial: fc.ComponentMaterial = new fc.ComponentMaterial(_material);
       this.addComponent(cmpMaterial);
+      
     }
   }
 }
