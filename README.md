@@ -1,25 +1,25 @@
 # Post-Human-Evolution
-
+  
 [Pages-Version](https://koegelma.github.io/Post-Human-Evolution/)
 
 [Designdokument](https://github.com/koegelma/Post-Human-Evolution/blob/main/Designdokument.pdf)
-
+  
 ## Über das Spiel
-
+  
 Das Spiel ist ein 2D Shooter mit Topdown View. Es spielt in einer Postapokalyptischen Welt, die von Zombies geplagt wird. Als einer der letzten noch verbleibenden Menschen ist es das Ziel des Spielers trotz aller Gefahren zu überleben. Um das zu erreichen muss er sich durch endlose Gegnerwellen kämpfen.
-
+  
 ## Steuerung und Interaktion
-
-Bewegung:   <kbd>WASD</kbd>
-Rotation:   MOUSE
-Shoot:      LEFT-MOUSE-BUTTON
-Reload:     <kbd>R</kbd>
-Dash:       <kbd>Shift</kbd>
-
-
+  
+Bewegung:   <kbd>WASD</kbd>  
+Rotation:   MOUSE  
+Shoot:      LEFT-MOUSE-BUTTON  
+Reload:     <kbd>R</kbd>  
+Dash:       <kbd>Shift</kbd>  
+  
+  
 ## Anforderungstabelle
-
-
+  
+  
 | Nr | Bezeichnung           | Inhalt                                                                                                                                                                                                                                                                         |
 |---:|-----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |    | Titel                 | Post Human Evolution
