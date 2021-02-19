@@ -20,7 +20,7 @@ Dash:       <kbd>Shift</kbd>
 Schwierigkeitstufe ändern:  
 Easy: <kbd>1</kbd>  
 Medium: <kbd>2</kbd>  
-Hard: <kbd>2</kbd>  
+Hard: <kbd>3</kbd>  
   
 ## Installation
 
