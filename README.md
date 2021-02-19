@@ -4,7 +4,7 @@
 
 [Designdokument](https://github.com/koegelma/Post-Human-Evolution/blob/main/Designdokument.pdf)
 
-# Steuerung
+## Steuerung
 
 
 | Nr | Bezeichnung           | Inhalt                                                                                                                                                                                                                                                                         |
