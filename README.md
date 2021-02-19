@@ -3,6 +3,7 @@
 [Pages-Version](https://koegelma.github.io/Post-Human-Evolution/)  
 [Designdokument](https://github.com/koegelma/Post-Human-Evolution/blob/main/Designdokument.pdf)  
 [Code](https://github.com/koegelma/Post-Human-Evolution/tree/main/classes)  
+[Download as zip](https://github.com/koegelma/Post-Human-Evolution/archive/main.zip)  
   
 ## Über das Spiel
   
