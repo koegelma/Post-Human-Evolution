@@ -1,3 +1,6 @@
+///<reference path="GameObject.ts"/>
+///<reference path="Moveable.ts"/>
+
 namespace PHE {
     import fc = FudgeCore;
     //import fcaid = FudgeAid;
