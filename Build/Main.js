@@ -367,6 +367,13 @@ var PHE;
     let controlReload = new fc.Control("AvatarControlReload", 1, 0 /* PROPORTIONAL */);
     let cmpAudioSoundtrack;
     let cmpAudioAmbience;
+    /*  export let adShoot: fc.Audio;
+     export let adReload: fc.Audio;
+     export let adEmptyGun: fc.Audio;
+     export let adZombie1: fc.Audio;
+     export let adZombie2: fc.Audio;
+     export let adSoundtrack: fc.Audio;
+     export let audioAmbience: fc.Audio; */
     let canvas;
     let cmpCamera;
     let timer = true;
@@ -375,12 +382,12 @@ var PHE;
     async function start(_event) {
         PHE.root = new fc.Node("Root");
         PHE.root.addComponent(new fc.ComponentTransform());
-        await loadSound();
+        //await loadSound();
         let listener = new ƒ.ComponentAudioListener();
         fc.AudioManager.default.listenTo(PHE.root);
         fc.AudioManager.default.listenWith(listener);
-        // let audioSoundtrack: fc.Audio = new fc.Audio("../Assets/Audio/soundtrack.mp3");
-        cmpAudioSoundtrack = new fc.ComponentAudio(PHE.adSoundtrack, true);
+        let audioSoundtrack = new fc.Audio("../Assets/Audio/soundtrack.mp3");
+        cmpAudioSoundtrack = new fc.ComponentAudio(audioSoundtrack, true);
         PHE.root.addComponent(cmpAudioSoundtrack);
         cmpAudioSoundtrack.play(true);
         let div = document.querySelector("div#StartScreen");
@@ -390,15 +397,15 @@ var PHE;
             hndLoad();
         });
     }
-    async function loadSound() {
-        PHE.adShoot = await new fc.Audio("../Assets/Audio/soundtrack.mp3");
-        PHE.adReload = await new fc.Audio("../Assets/Audio/Reloading-Magazine.mp3");
-        PHE.adEmptyGun = await new fc.Audio("../Assets/Audio/empty-gun.mp3");
-        /* adZombie1 = await fc.Audio.load("");
-        adZombie2 = await fc.Audio.load(""); */
-        PHE.adSoundtrack = await new fc.Audio("../Assets/Audio/soundtrack.mp3");
+    /* async function loadSound(): Promise<void> {
+        adShoot = await new fc.Audio("../Assets/Audio/soundtrack.mp3");
+        adReload = await new fc.Audio("../Assets/Audio/Reloading-Magazine.mp3");
+        adEmptyGun = await new fc.Audio("../Assets/Audio/empty-gun.mp3");
+        adZombie1 = await fc.Audio.load("");
+        adZombie2 = await fc.Audio.load("");
+        adSoundtrack = await new fc.Audio("../Assets/Audio/soundtrack.mp3");
         //audioAmbience = await fc.Audio.load("");
-    }
+    } */
     function hndLoad() {
         canvas = document.querySelector("canvas");
         setupLevel();

@@ -29,13 +29,13 @@ namespace PHE {
     let cmpAudioSoundtrack: fc.ComponentAudio;
     let cmpAudioAmbience: fc.ComponentAudio;
 
-    export let adShoot: fc.Audio;
+   /*  export let adShoot: fc.Audio;
     export let adReload: fc.Audio;
     export let adEmptyGun: fc.Audio;
     export let adZombie1: fc.Audio;
     export let adZombie2: fc.Audio;
     export let adSoundtrack: fc.Audio;
-    export let audioAmbience: fc.Audio;
+    export let audioAmbience: fc.Audio; */
 
     let canvas: HTMLCanvasElement;
     let cmpCamera: fc.ComponentCamera;
@@ -49,14 +49,14 @@ namespace PHE {
         root = new fc.Node("Root");
         root.addComponent(new fc.ComponentTransform());
 
-        await loadSound();
+        //await loadSound();
 
         let listener: ƒ.ComponentAudioListener = new ƒ.ComponentAudioListener();
         fc.AudioManager.default.listenTo(root);
         fc.AudioManager.default.listenWith(listener);
 
-       // let audioSoundtrack: fc.Audio = new fc.Audio("../Assets/Audio/soundtrack.mp3");
-        cmpAudioSoundtrack = new fc.ComponentAudio(adSoundtrack, true);
+        let audioSoundtrack: fc.Audio = new fc.Audio("../Assets/Audio/soundtrack.mp3");
+        cmpAudioSoundtrack = new fc.ComponentAudio(audioSoundtrack, true);
         root.addComponent(cmpAudioSoundtrack);
         cmpAudioSoundtrack.play(true);
 
@@ -68,15 +68,15 @@ namespace PHE {
         });
     }
 
-    async function loadSound(): Promise<void> {
+    /* async function loadSound(): Promise<void> {
         adShoot = await new fc.Audio("../Assets/Audio/soundtrack.mp3");
         adReload = await new fc.Audio("../Assets/Audio/Reloading-Magazine.mp3");
         adEmptyGun = await new fc.Audio("../Assets/Audio/empty-gun.mp3");
-        /* adZombie1 = await fc.Audio.load("");
-        adZombie2 = await fc.Audio.load(""); */
+        adZombie1 = await fc.Audio.load("");
+        adZombie2 = await fc.Audio.load("");
         adSoundtrack = await new fc.Audio("../Assets/Audio/soundtrack.mp3");
         //audioAmbience = await fc.Audio.load("");
-    }
+    } */
 
     function hndLoad(): void {
 
