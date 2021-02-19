@@ -270,7 +270,7 @@ var PHE;
         update() {
             this.moveEnemy();
             if (this.checkCollision(PHE.avatar, null) && PHE.gameState.health > 0) {
-                PHE.gameState.health -= 5;
+                PHE.gameState.health -= PHE.gameState.enemyDamage;
                 this.mtxLocal.translateX(-2);
                 this.rect.position.x = this.mtxLocal.translation.x - this.rect.size.x / 2;
                 this.rect.position.y = this.mtxLocal.translation.y - this.rect.size.y / 2;
@@ -339,6 +339,7 @@ var PHE;
             this.score = 0;
             this.ammo = 15;
             this.highscore = 0;
+            this.enemyDamage = 5;
         }
         reduceMutator(_mutator) { }
     }
@@ -365,6 +366,7 @@ var PHE;
     let controlDash = new fc.Control("AvatarControlDash", 1, 0 /* PROPORTIONAL */);
     let controlShoot = new fc.Control("AvatarControlShoot", 1, 0 /* PROPORTIONAL */);
     let controlReload = new fc.Control("AvatarControlReload", 1, 0 /* PROPORTIONAL */);
+    let controlDifficulty = new fc.Control("ControlDifficulty", 1, 0 /* PROPORTIONAL */);
     let cmpAudioSoundtrack;
     let cmpAudioAmbience;
     /*  export let adShoot: fc.Audio;
@@ -423,6 +425,7 @@ var PHE;
         PHE.avatar.moveAvatar(PHE.controlVertical.getOutput(), PHE.controlHorizontal.getOutput(), controlDash.getOutput(), PHE.controlRotation.getOutput(), controlShoot.getOutput(), controlReload.getOutput());
         PHE.controlRotation.setInput(0);
         hndCollision();
+        setDifficulty();
         for (let enemy of PHE.enemies.getChildren()) {
             enemy.update();
         }
@@ -446,6 +449,25 @@ var PHE;
         let normal = PHE.floor.mtxWorld.getZ();
         let mousePosWorld = PHE.viewport.getRayFromClient(mousePosClient).intersectPlane(mousePos3DClient, normal);
         PHE.avatar.rotateTo(mousePosWorld);
+    }
+    function setDifficulty() {
+        let difficulty = controlDifficulty.getOutput();
+        switch (difficulty) {
+            case 1:
+                enemySpawnTime = 5000;
+                PHE.gameState.enemyDamage = 5;
+                break;
+            case 2:
+                enemySpawnTime = 3500;
+                PHE.gameState.enemyDamage = 20;
+                break;
+            case 3:
+                enemySpawnTime = 1000;
+                PHE.gameState.enemyDamage = 50;
+                break;
+            default:
+                break;
+        }
     }
     function increaseEnemys() {
         if (timer) {
@@ -507,6 +529,9 @@ var PHE;
         controlDash.setInput(fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.SHIFT_LEFT]));
         controlShoot.setInput(fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.SPACE]));
         controlReload.setInput(fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.R]));
+        controlDifficulty.setInput(fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.ONE])
+            + fc.Keyboard.mapToValue(2, 0, [fc.KEYBOARD_CODE.TWO])
+            + fc.Keyboard.mapToValue(3, 0, [fc.KEYBOARD_CODE.THREE]));
     }
     function hndCollision() {
         for (let wall of PHE.walls.getChildren()) {

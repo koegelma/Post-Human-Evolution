@@ -7,6 +7,7 @@ namespace PHE {
     public score: number = 0;
     public ammo: number = 15;
     public highscore: number = 0;
+    public enemyDamage: number = 5;
     protected reduceMutator(_mutator: fc.Mutator): void {/* */ }
   }
 

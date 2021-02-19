@@ -20,6 +20,7 @@ namespace PHE {
     let controlDash: fc.Control = new fc.Control("AvatarControlDash", 1, fc.CONTROL_TYPE.PROPORTIONAL);
     let controlShoot: fc.Control = new fc.Control("AvatarControlShoot", 1, fc.CONTROL_TYPE.PROPORTIONAL);
     let controlReload: fc.Control = new fc.Control("AvatarControlReload", 1, fc.CONTROL_TYPE.PROPORTIONAL);
+    let controlDifficulty: fc.Control = new fc.Control("ControlDifficulty", 1, fc.CONTROL_TYPE.PROPORTIONAL);
 
     export let cmpAudioShoot: fc.ComponentAudio;
     export let cmpAudioReload: fc.ComponentAudio;
@@ -29,13 +30,13 @@ namespace PHE {
     let cmpAudioSoundtrack: fc.ComponentAudio;
     let cmpAudioAmbience: fc.ComponentAudio;
 
-   /*  export let adShoot: fc.Audio;
-    export let adReload: fc.Audio;
-    export let adEmptyGun: fc.Audio;
-    export let adZombie1: fc.Audio;
-    export let adZombie2: fc.Audio;
-    export let adSoundtrack: fc.Audio;
-    export let audioAmbience: fc.Audio; */
+    /*  export let adShoot: fc.Audio;
+     export let adReload: fc.Audio;
+     export let adEmptyGun: fc.Audio;
+     export let adZombie1: fc.Audio;
+     export let adZombie2: fc.Audio;
+     export let adSoundtrack: fc.Audio;
+     export let audioAmbience: fc.Audio; */
 
     let canvas: HTMLCanvasElement;
     let cmpCamera: fc.ComponentCamera;
@@ -103,6 +104,8 @@ namespace PHE {
 
         hndCollision();
 
+        setDifficulty();
+
         for (let enemy of enemies.getChildren() as Enemy[]) {
             enemy.update();
         }
@@ -132,6 +135,26 @@ namespace PHE {
 
         avatar.rotateTo(mousePosWorld);
 
+    }
+
+    function setDifficulty(): void {
+        let difficulty: number = controlDifficulty.getOutput();
+        switch (difficulty) {
+            case 1:
+                enemySpawnTime = 5000;
+                gameState.enemyDamage = 5;
+                break;
+            case 2:
+                enemySpawnTime = 3500;
+                gameState.enemyDamage = 20;
+                break;
+            case 3:
+                enemySpawnTime = 1000;
+                gameState.enemyDamage = 50;
+                break;
+            default:
+                break;
+        }
     }
 
     function increaseEnemys(): void {
@@ -217,6 +240,12 @@ namespace PHE {
 
         controlReload.setInput(
             fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.R])
+        );
+
+        controlDifficulty.setInput(
+            fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.ONE])
+            + fc.Keyboard.mapToValue(2, 0, [fc.KEYBOARD_CODE.TWO])
+            + fc.Keyboard.mapToValue(3, 0, [fc.KEYBOARD_CODE.THREE])
         );
     }
 

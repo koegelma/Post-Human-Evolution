@@ -47,7 +47,7 @@ namespace PHE {
         public update(): void {
             this.moveEnemy();
             if (this.checkCollision(avatar, null) && gameState.health > 0) {
-                gameState.health -= 5;
+                gameState.health -= gameState.enemyDamage;
                 this.mtxLocal.translateX(-2);
                 this.rect.position.x = this.mtxLocal.translation.x - this.rect.size.x / 2;
                 this.rect.position.y = this.mtxLocal.translation.y - this.rect.size.y / 2;
