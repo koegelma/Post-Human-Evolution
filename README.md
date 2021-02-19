@@ -7,7 +7,9 @@
   
 ## Über das Spiel
   
-Das Spiel ist ein 2D Shooter mit Topdown View. Es spielt in einer Postapokalyptischen Welt, die von Zombies geplagt wird. Als einer der letzten noch verbleibenden Menschen ist es das Ziel des Spielers trotz aller Gefahren zu überleben. Um das zu erreichen muss er sich durch endlose Gegnerwellen kämpfen.
+Das Spiel ist ein 2D Shooter mit Topdown View. Es spielt in einer Postapokalyptischen Welt, die von Zombies geplagt wird. Als einer der letzten noch verbleibenden Menschen ist es das Ziel des Spielers trotz aller Gefahren zu überleben. Um das zu erreichen muss er sich durch endlose Gegnerwellen kämpfen.  
+  
+Das Spiel wurde mit FUDGE (Furtwangen University Didactic Game Editor) an der Hochschule Furtwangen im Rahmen der Veranstaltung Prototyping interaktiver Medien-Apps und Games entwickelt.
   
 ## Steuerung und Interaktion
   
