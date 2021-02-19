@@ -1,5 +1,12 @@
 # Post-Human-Evolution
 
+[Pages-Version](https://koegelma.github.io/Post-Human-Evolution/)
+
+[Designdokument](https://github.com/koegelma/Post-Human-Evolution/blob/main/Designdokument.pdf)
+
+
+
+
 | Nr | Bezeichnung           | Inhalt                                                                                                                                                                                                                                                                         |
 |---:|-----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 |    | Titel                 | Post Human Evolution
