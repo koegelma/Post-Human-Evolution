@@ -32,7 +32,6 @@ var PHE;
         moveAvatar(_translationY, _translationX, _dash, _rotation, _shoot, _reload) {
             let speedX = _translationX * 0.08;
             let speedY = _translationY * 0.08;
-            //let rotation: number = _rotation * 2;
             if (_dash == 1 && !this.usedDash) {
                 let dashSpeed = 15;
                 speedX *= dashSpeed;
@@ -48,15 +47,15 @@ var PHE;
                 speedX *= 1;
                 speedY *= 1;
             }
+            if (_reload == 1) {
+                PHE.gameState.ammo = 15;
+                PHE.cmpAudioReload.play(true);
+            }
             this.mtxLocal.translateX(speedX);
             this.mtxLocal.translateY(speedY);
             this.rect.position.x = this.mtxLocal.translation.x - this.rect.size.x / 2;
             this.rect.position.y = this.mtxLocal.translation.y - this.rect.size.y / 2;
             this.animation.mtxLocal.rotateZ(_rotation);
-            if (_reload == 1) {
-                PHE.gameState.ammo = 15;
-                PHE.cmpAudioReload.play(true);
-            }
         }
         shoot() {
             if (this.shotReady && PHE.gameState.ammo > 0) {

@@ -65,8 +65,8 @@ namespace PHE {
         }
 
         private moveEnemy(): void {
-
-            if (this.vectorAmount(fc.Vector3.DIFFERENCE(avatar.mtxLocal.translation, this.mtxLocal.translation)) < 8 && this.vectorAmount(fc.Vector3.DIFFERENCE(avatar.mtxLocal.translation, this.mtxLocal.translation)) > 1) {
+            // check if avatar is in range, then rotate and move enemy
+            if (this.vectorAmount(fc.Vector3.DIFFERENCE(avatar.mtxLocal.translation, this.mtxLocal.translation)) < 10 && this.vectorAmount(fc.Vector3.DIFFERENCE(avatar.mtxLocal.translation, this.mtxLocal.translation)) > 1) {
                 this.rotateToAvatar();
                 this.mtxLocal.translateX(this.speed * fc.Loop.timeFrameGame / 1000);
                 this.rect.position.x = this.mtxLocal.translation.x - this.rect.size.x / 2;
@@ -75,11 +75,10 @@ namespace PHE {
         }
 
         private rotateToAvatar(): void {
+            // calculate rotation angle via unit circle
+            let vectorAnimation: fc.Vector3 = fc.Vector3.DIFFERENCE(avatar.mtxLocal.translation, this.mtxLocal.translation);
+            vectorAnimation = new fc.Vector3(vectorAnimation.x, vectorAnimation.y, 0);
 
-            let vectorAnimation3D: fc.Vector3 = fc.Vector3.DIFFERENCE(avatar.mtxLocal.translation, this.mtxLocal.translation);
-            let vectorAnimation: fc.Vector3 = new fc.Vector3(vectorAnimation3D.x, vectorAnimation3D.y, 0);
-
-            // let xCoordNorm: number = (1 / this.vectorAmount(vectorA)) * vectorA.x;
             let yCoordNorm: number = (1 / this.vectorAmount(vectorAnimation)) * vectorAnimation.y;
 
             let angle: number;

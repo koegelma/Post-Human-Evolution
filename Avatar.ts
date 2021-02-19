@@ -41,8 +41,6 @@ namespace PHE {
             let speedX: number = _translationX * 0.08;
             let speedY: number = _translationY * 0.08;
 
-            //let rotation: number = _rotation * 2;
-
             if (_dash == 1 && !this.usedDash) {
                 let dashSpeed: number = 15;
                 speedX *= dashSpeed;
@@ -58,16 +56,16 @@ namespace PHE {
                 speedY *= 1;
             }
 
+            if (_reload == 1) {
+                gameState.ammo = 15;
+                cmpAudioReload.play(true);
+            }
+
             this.mtxLocal.translateX(speedX);
             this.mtxLocal.translateY(speedY);
             this.rect.position.x = this.mtxLocal.translation.x - this.rect.size.x / 2;
             this.rect.position.y = this.mtxLocal.translation.y - this.rect.size.y / 2;
             this.animation.mtxLocal.rotateZ(_rotation);
-
-            if (_reload == 1) {
-                gameState.ammo = 15;
-                cmpAudioReload.play(true);
-            }
         }
 
         public shoot(): void {
@@ -94,12 +92,9 @@ namespace PHE {
         }
 
         public rotateTo(_mousePos: fc.Vector3): void {
-
             let newMousePos: fc.Vector3 = fc.Vector3.DIFFERENCE(_mousePos, this.mtxWorld.translation);
             let lookDirection: fc.Vector3 = this.animation.mtxWorld.getX();
-
             let angleRotation: number = this.calcAngleBetweenVectors(newMousePos, lookDirection);
-
             let newLookDirection: fc.Vector3 = this.rotateVector(lookDirection, angleRotation);
 
             if (this.calcAngleBetweenVectors(newLookDirection, newMousePos) > 0.1) {
@@ -138,7 +133,7 @@ namespace PHE {
         }
 
 
-        
+
 
 
 

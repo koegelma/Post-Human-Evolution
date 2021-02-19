@@ -8,7 +8,6 @@ var PHE;
     PHE.controlHorizontal = new fc.Control("AvatarControlHorizontal", 1, 0 /* PROPORTIONAL */);
     PHE.controlHorizontal.setDelay(80);
     PHE.controlRotation = new fc.Control("AvatarControlRotation", 1, 0 /* PROPORTIONAL */);
-    //controlRotation.setDelay(80);
     let controlDash = new fc.Control("AvatarControlDash", 1, 0 /* PROPORTIONAL */);
     let controlShoot = new fc.Control("AvatarControlShoot", 1, 0 /* PROPORTIONAL */);
     let controlReload = new fc.Control("AvatarControlReload", 1, 0 /* PROPORTIONAL */);
@@ -74,7 +73,6 @@ var PHE;
         let mousePos3DClient = new fc.Vector3(_event.clientX, _event.clientY, 0);
         //console.log("X: " + _event.clientX + "\nY: " + _event.clientY);
         let normal = PHE.floor.mtxWorld.getZ();
-        //let normal: fc.Vector3 = new fc.Vector3(0, 0, 1);
         let mousePosWorld = PHE.viewport.getRayFromClient(mousePosClient).intersectPlane(mousePos3DClient, normal);
         PHE.avatar.rotateTo(mousePosWorld);
     }
@@ -83,11 +81,10 @@ var PHE;
             timer = false;
             fc.Time.game.setTimer(enemySpawnTime, 1, (_event) => {
                 spawnEnemy();
-                //console.log("Test Timer");
-                timer = true;
                 if (enemySpawnTime > 1000) {
                     enemySpawnTime -= 100;
                 }
+                timer = true;
             });
         }
     }
@@ -137,10 +134,6 @@ var PHE;
         PHE.controlHorizontal.setInput(fc.Keyboard.mapToValue(-1, 0, [fc.KEYBOARD_CODE.A])
             + fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.D]));
         controlDash.setInput(fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.SHIFT_LEFT]));
-        /*  controlRotation.setInput(
-             fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.ARROW_LEFT])
-             + fc.Keyboard.mapToValue(-1, 0, [fc.KEYBOARD_CODE.ARROW_RIGHT])
-         ); */
         controlShoot.setInput(fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.SPACE]));
         controlReload.setInput(fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.R]));
     }

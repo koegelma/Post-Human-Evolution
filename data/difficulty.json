@@ -16,5 +16,11 @@
         "_difficulty": "hard",
         "_enemies": 20,
         "_enemyStrength": 30
+    },
+    {
+        "_id": 4,
+        "_difficulty": "undead",
+        "_enemies": 30,
+        "_enemyStrength": 50
     }
 ]

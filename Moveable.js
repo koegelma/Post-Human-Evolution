@@ -4,8 +4,8 @@ var PHE;
     var fc = FudgeCore;
     let Axis;
     (function (Axis) {
-        Axis[Axis["xAxis"] = 0] = "xAxis";
-        Axis[Axis["yAxis"] = 1] = "yAxis";
+        Axis[Axis["XAXIS"] = 0] = "XAXIS";
+        Axis[Axis["YAXIS"] = 1] = "YAXIS";
     })(Axis || (Axis = {}));
     class Moveable extends PHE.GameObject {
         constructor(_name, _size, _position) {
@@ -29,41 +29,34 @@ var PHE;
                 return false;
             if (_name === "avatar") {
                 if (intersection.size.x < intersection.size.y) {
-                    this.hndCollisionAvatar(_target, Axis.xAxis);
+                    this.hndCollisionAvatar(_target, Axis.XAXIS);
                 }
                 else {
-                    this.hndCollisionAvatar(_target, Axis.yAxis);
+                    this.hndCollisionAvatar(_target, Axis.YAXIS);
                 }
             }
             return true;
         }
         hndCollisionAvatar(_target, _axis) {
-            if (_axis == Axis.xAxis) {
+            let buffer = 0.5;
+            if (_axis == Axis.XAXIS) {
                 if (this.mtxLocal.translation.x < _target.mtxLocal.translation.x) {
-                    if (this.mtxLocal.translation.x != _target.mtxLocal.translation.x - 0.5 * (this.getComponent(fc.ComponentMesh).pivot.scaling.x + _target.getComponent(fc.ComponentMesh).pivot.scaling.x)) {
-                        this.velocity.x = 0;
-                        this.mtxLocal.translation = new fc.Vector3(_target.mtxLocal.translation.x - 0.5 * (this.getComponent(fc.ComponentMesh).pivot.scaling.x + _target.getComponent(fc.ComponentMesh).pivot.scaling.x), this.mtxLocal.translation.y, 0);
-                    }
+                    this.velocity.x = 0;
+                    this.mtxLocal.translation = new fc.Vector3(_target.mtxLocal.translation.x - buffer * (this.getComponent(fc.ComponentMesh).pivot.scaling.x + _target.getComponent(fc.ComponentMesh).pivot.scaling.x), this.mtxLocal.translation.y, 0);
                 }
                 else {
-                    if (this.mtxLocal.translation.x != _target.mtxLocal.translation.x + 0.5 * (this.getComponent(fc.ComponentMesh).pivot.scaling.x + _target.getComponent(fc.ComponentMesh).pivot.scaling.x)) {
-                        this.velocity.x = 0;
-                        this.mtxLocal.translation = new fc.Vector3(_target.mtxLocal.translation.x + 0.5 * (this.getComponent(fc.ComponentMesh).pivot.scaling.x + _target.getComponent(fc.ComponentMesh).pivot.scaling.x), this.mtxLocal.translation.y, 0);
-                    }
+                    this.velocity.x = 0;
+                    this.mtxLocal.translation = new fc.Vector3(_target.mtxLocal.translation.x + buffer * (this.getComponent(fc.ComponentMesh).pivot.scaling.x + _target.getComponent(fc.ComponentMesh).pivot.scaling.x), this.mtxLocal.translation.y, 0);
                 }
             }
-            else if (_axis == Axis.yAxis) {
+            else if (_axis == Axis.YAXIS) {
                 if (this.mtxLocal.translation.y > _target.mtxLocal.translation.y) {
-                    if (this.mtxLocal.translation.y != _target.mtxLocal.translation.y + 0.5 * (this.getComponent(fc.ComponentMesh).pivot.scaling.y + _target.getComponent(fc.ComponentMesh).pivot.scaling.y)) {
-                        this.velocity.y = 0;
-                        this.mtxLocal.translation = new fc.Vector3(this.mtxLocal.translation.x, _target.mtxLocal.translation.y + 0.5 * (this.getComponent(fc.ComponentMesh).pivot.scaling.y + _target.getComponent(fc.ComponentMesh).pivot.scaling.y), 0);
-                    }
+                    this.velocity.y = 0;
+                    this.mtxLocal.translation = new fc.Vector3(this.mtxLocal.translation.x, _target.mtxLocal.translation.y + buffer * (this.getComponent(fc.ComponentMesh).pivot.scaling.y + _target.getComponent(fc.ComponentMesh).pivot.scaling.y), 0);
                 }
                 else {
-                    if (this.mtxLocal.translation.y != _target.mtxLocal.translation.y - 0.5 * (this.getComponent(fc.ComponentMesh).pivot.scaling.y + _target.getComponent(fc.ComponentMesh).pivot.scaling.y)) {
-                        this.velocity.y = 0;
-                        this.mtxLocal.translation = new fc.Vector3(this.mtxLocal.translation.x, _target.mtxLocal.translation.y - 0.5 * (this.getComponent(fc.ComponentMesh).pivot.scaling.y + _target.getComponent(fc.ComponentMesh).pivot.scaling.y), 0);
-                    }
+                    this.velocity.y = 0;
+                    this.mtxLocal.translation = new fc.Vector3(this.mtxLocal.translation.x, _target.mtxLocal.translation.y - buffer * (this.getComponent(fc.ComponentMesh).pivot.scaling.y + _target.getComponent(fc.ComponentMesh).pivot.scaling.y), 0);
                 }
             }
         }
