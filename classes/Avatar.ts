@@ -7,11 +7,9 @@ namespace PHE {
 
     export class Avatar extends Moveable {
 
-        // public rect: fc.Rectangle;
-
         private clrWhite: fc.Color = fc.Color.CSS("white");
         private meshQuad: fc.MeshQuad = new fc.MeshQuad();
-        private txtAvatar: fc.TextureImage = new fc.TextureImage("../Assets/Top_Down_Survivor/shotgun/idle/survivor-idle_shotgun_0.png");
+        private txtAvatar: fc.TextureImage = new fc.TextureImage("../Assets/avatar.png");
         private mtrAvatar: fc.Material = new fc.Material("MaterialAvatar", fc.ShaderTexture, new fc.CoatTextured(this.clrWhite, this.txtAvatar));
         private animation: fc.Node;
         private usedDash: boolean = false;

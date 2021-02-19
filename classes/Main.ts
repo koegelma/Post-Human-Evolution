@@ -129,7 +129,7 @@ namespace PHE {
     }
 
     function spawnEnemy(): void {
-        let txtZombie2: fc.TextureImage = new fc.TextureImage("../Assets/Zombie/attack01/attack01_0000.png");
+        let txtZombie2: fc.TextureImage = new fc.TextureImage("../Assets/zombie.png");
         let mtrZombie2: fc.Material = new fc.Material("MaterialEnemy", fc.ShaderTexture, new fc.CoatTextured(fc.Color.CSS("WHITE"), txtZombie2));
         enemies.appendChild(new Enemy("Enemy", new fc.Vector3(4, 4, 2), new fc.Vector3(fc.Random.default.getRange(-10, 16), fc.Random.default.getRange(-8, 8), 0), mtrZombie2));
     }
@@ -236,7 +236,7 @@ namespace PHE {
 
     function createEnemies(_number: number): fc.Node {
         let enemies: fc.Node = new fc.Node("Enemies");
-        let txtZombie2: fc.TextureImage = new fc.TextureImage("../Assets/Zombie/attack01/attack01_0000.png");
+        let txtZombie2: fc.TextureImage = new fc.TextureImage("../Assets/zombie.png");
         let mtrZombie2: fc.Material = new fc.Material("MaterialEnemy", fc.ShaderTexture, new fc.CoatTextured(fc.Color.CSS("WHITE"), txtZombie2));
 
         for (let index: number = 0; index < _number; index++) {

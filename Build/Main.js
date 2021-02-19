@@ -92,10 +92,9 @@ var PHE;
     class Avatar extends PHE.Moveable {
         constructor(_name, _size, _position) {
             super(_name, _size, _position);
-            // public rect: fc.Rectangle;
             this.clrWhite = fc.Color.CSS("white");
             this.meshQuad = new fc.MeshQuad();
-            this.txtAvatar = new fc.TextureImage("../Assets/Top_Down_Survivor/shotgun/idle/survivor-idle_shotgun_0.png");
+            this.txtAvatar = new fc.TextureImage("../Assets/avatar.png");
             this.mtrAvatar = new fc.Material("MaterialAvatar", fc.ShaderTexture, new fc.CoatTextured(this.clrWhite, this.txtAvatar));
             this.usedDash = false;
             this.shotReady = true;
@@ -444,7 +443,7 @@ var PHE;
         }
     }
     function spawnEnemy() {
-        let txtZombie2 = new fc.TextureImage("../Assets/Zombie/attack01/attack01_0000.png");
+        let txtZombie2 = new fc.TextureImage("../Assets/zombie.png");
         let mtrZombie2 = new fc.Material("MaterialEnemy", fc.ShaderTexture, new fc.CoatTextured(fc.Color.CSS("WHITE"), txtZombie2));
         PHE.enemies.appendChild(new PHE.Enemy("Enemy", new fc.Vector3(4, 4, 2), new fc.Vector3(fc.Random.default.getRange(-10, 16), fc.Random.default.getRange(-8, 8), 0), mtrZombie2));
     }
@@ -522,7 +521,7 @@ var PHE;
     }
     function createEnemies(_number) {
         let enemies = new fc.Node("Enemies");
-        let txtZombie2 = new fc.TextureImage("../Assets/Zombie/attack01/attack01_0000.png");
+        let txtZombie2 = new fc.TextureImage("../Assets/zombie.png");
         let mtrZombie2 = new fc.Material("MaterialEnemy", fc.ShaderTexture, new fc.CoatTextured(fc.Color.CSS("WHITE"), txtZombie2));
         for (let index = 0; index < _number; index++) {
             enemies.appendChild(new PHE.Enemy("Enemy" + index, new fc.Vector3(4, 4, 2), new fc.Vector3(fc.Random.default.getRange(-10, 16), fc.Random.default.getRange(-8, 8), 0), mtrZombie2));
