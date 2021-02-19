@@ -16,6 +16,11 @@ Rotation:   Mouse
 Shoot:      Left-Mouse-Button  
 Reload:     <kbd>R</kbd>  
 Dash:       <kbd>Shift</kbd>  
+
+Schwierigkeitstufe ändern:  
+Easy: <kbd>1</kbd>  
+Medium: <kbd>2</kbd>  
+Hard: <kbd>2</kbd>  
   
 ## Installation
 
