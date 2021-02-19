@@ -4,12 +4,12 @@ namespace PHE {
     export class Bullet extends Moveable {
 
         public velocity: fc.Vector3 = fc.Vector3.ZERO();
-        public grey: fc.Material = new fc.Material("Grey", fc.ShaderUniColor, new fc.CoatColored(fc.Color.CSS("GREY")));
+        //public grey: fc.Material = new fc.Material("Grey", fc.ShaderUniColor, new fc.CoatColored(fc.Color.CSS("GREY")));
 
         public constructor(_name: string, _size: fc.Vector3, _position: fc.Vector3) {
             super("Bullet", _size, _position);
-            let cmpMaterial: fc.ComponentMaterial = new fc.ComponentMaterial(this.grey);
-            this.addComponent(cmpMaterial);
+            //let cmpMaterial: fc.ComponentMaterial = new fc.ComponentMaterial(this.grey);
+            //this.addComponent(cmpMaterial); 
         }
 
         public shoot(_velocity: fc.Vector3): boolean {

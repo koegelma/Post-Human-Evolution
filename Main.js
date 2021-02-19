@@ -8,7 +8,7 @@ var PHE;
     PHE.controlHorizontal = new fc.Control("AvatarControlHorizontal", 1, 0 /* PROPORTIONAL */);
     PHE.controlHorizontal.setDelay(80);
     PHE.controlRotation = new fc.Control("AvatarControlRotation", 1, 0 /* PROPORTIONAL */);
-    PHE.controlRotation.setDelay(80);
+    //controlRotation.setDelay(80);
     let controlDash = new fc.Control("AvatarControlDash", 1, 0 /* PROPORTIONAL */);
     let controlShoot = new fc.Control("AvatarControlShoot", 1, 0 /* PROPORTIONAL */);
     let controlReload = new fc.Control("AvatarControlReload", 1, 0 /* PROPORTIONAL */);
@@ -43,13 +43,15 @@ var PHE;
         PHE.viewport = new fc.Viewport();
         PHE.viewport.initialize("Viewport", PHE.root, cmpCamera, canvas);
         PHE.Hud.start();
+        canvas.addEventListener("mousemove", hndMouse);
+        canvas.addEventListener("click", shoot);
         fc.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, hndLoop);
         fc.Loop.start(fc.LOOP_MODE.TIME_GAME, 60);
     }
     function hndLoop(_event) {
         setControlInput();
         PHE.avatar.moveAvatar(PHE.controlVertical.getOutput(), PHE.controlHorizontal.getOutput(), controlDash.getOutput(), PHE.controlRotation.getOutput(), controlShoot.getOutput(), controlReload.getOutput());
-        //controlRotation.setInput(0);
+        PHE.controlRotation.setInput(0);
         hndCollision();
         for (let enemy of PHE.enemies.getChildren()) {
             enemy.update();
@@ -64,6 +66,18 @@ var PHE;
         }
         PHE.viewport.draw();
     }
+    function shoot() {
+        PHE.avatar.shoot();
+    }
+    function hndMouse(_event) {
+        let mousePosClient = new fc.Vector2(_event.clientX, _event.clientY);
+        let mousePos3DClient = new fc.Vector3(_event.clientX, _event.clientY, 0);
+        //console.log("X: " + _event.clientX + "\nY: " + _event.clientY);
+        let normal = PHE.floor.mtxWorld.getZ();
+        //let normal: fc.Vector3 = new fc.Vector3(0, 0, 1);
+        let mousePosWorld = PHE.viewport.getRayFromClient(mousePosClient).intersectPlane(mousePos3DClient, normal);
+        PHE.avatar.rotateTo(mousePosWorld);
+    }
     function increaseEnemys() {
         if (timer) {
             timer = false;
@@ -71,7 +85,7 @@ var PHE;
                 spawnEnemy();
                 //console.log("Test Timer");
                 timer = true;
-                if (enemySpawnTime > 200) {
+                if (enemySpawnTime > 1000) {
                     enemySpawnTime -= 100;
                 }
             });
@@ -113,6 +127,7 @@ var PHE;
         PHE.gameState.health = 100;
         PHE.gameState.ammo = 15;
         PHE.gameState.score = 0;
+        enemySpawnTime = 5000;
         PHE.viewport = new fc.Viewport();
         PHE.viewport.initialize("Viewport", PHE.root, cmpCamera, canvas);
     }
@@ -122,8 +137,10 @@ var PHE;
         PHE.controlHorizontal.setInput(fc.Keyboard.mapToValue(-1, 0, [fc.KEYBOARD_CODE.A])
             + fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.D]));
         controlDash.setInput(fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.SHIFT_LEFT]));
-        PHE.controlRotation.setInput(fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.ARROW_LEFT])
-            + fc.Keyboard.mapToValue(-1, 0, [fc.KEYBOARD_CODE.ARROW_RIGHT]));
+        /*  controlRotation.setInput(
+             fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.ARROW_LEFT])
+             + fc.Keyboard.mapToValue(-1, 0, [fc.KEYBOARD_CODE.ARROW_RIGHT])
+         ); */
         controlShoot.setInput(fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.SPACE]));
         controlReload.setInput(fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.R]));
     }

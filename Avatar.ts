@@ -41,7 +41,7 @@ namespace PHE {
             let speedX: number = _translationX * 0.08;
             let speedY: number = _translationY * 0.08;
 
-            let rotation: number = _rotation * 2;
+            //let rotation: number = _rotation * 2;
 
             if (_dash == 1 && !this.usedDash) {
                 let dashSpeed: number = 15;
@@ -62,19 +62,7 @@ namespace PHE {
             this.mtxLocal.translateY(speedY);
             this.rect.position.x = this.mtxLocal.translation.x - this.rect.size.x / 2;
             this.rect.position.y = this.mtxLocal.translation.y - this.rect.size.y / 2;
-            this.animation.mtxLocal.rotateZ(rotation);
-
-            if (_shoot == 1 && this.shotReady && gameState.ammo > 0) {
-                this.shoot();
-                this.shotReady = false;
-                fc.Time.game.setTimer(800, 1, (_event: fc.EventTimer) => {
-                    this.shotReady = true;
-                });
-            } else if (_shoot == 1 && this.shotReady && gameState.ammo == 0) {
-                cmpAudioEmptyGun.play(true);
-            }
-
-            
+            this.animation.mtxLocal.rotateZ(_rotation);
 
             if (_reload == 1) {
                 gameState.ammo = 15;
@@ -82,22 +70,77 @@ namespace PHE {
             }
         }
 
-        private shoot(): void {
+        public shoot(): void {
+            if (this.shotReady && gameState.ammo > 0) {
 
-            let shotDirection: fc.Vector3 = this.animation.mtxWorld.getX();
+                let shotDirection: fc.Vector3 = this.animation.mtxWorld.getX();
+                let bulletPosition: fc.Vector3 = new fc.Vector3(this.mtxWorld.translation.x, this.mtxWorld.translation.y - 0.24, 1);
 
-            console.log("Shootdirection: " + shotDirection);
+                bullet = new Bullet("Bullet", new fc.Vector3(0.1, 0.1, 1), bulletPosition);
+                level.appendChild(bullet);
 
-            let bulletPosition: fc.Vector3 = new fc.Vector3(this.mtxWorld.translation.x, this.mtxWorld.translation.y - 0.24, 1);
+                cmpAudioShoot.play(true);
 
-            bullet = new Bullet("Bullet", new fc.Vector3(0.1, 0.1, 1), bulletPosition);
-            level.appendChild(bullet);
+                bullet.shoot(shotDirection);
+                gameState.ammo--;
 
-            cmpAudioShoot.play(true);
-
-            bullet.shoot(shotDirection);
-            gameState.ammo--;
+                this.shotReady = false;
+                fc.Time.game.setTimer(800, 1, (_event: fc.EventTimer) => {
+                    this.shotReady = true;
+                });
+            } else if (this.shotReady && gameState.ammo == 0) {
+                cmpAudioEmptyGun.play(true);
+            }
         }
+
+        public rotateTo(_mousePos: fc.Vector3): void {
+
+            let newMousePos: fc.Vector3 = fc.Vector3.DIFFERENCE(_mousePos, this.mtxWorld.translation);
+            let lookDirection: fc.Vector3 = this.animation.mtxWorld.getX();
+
+            let angleRotation: number = this.calcAngleBetweenVectors(newMousePos, lookDirection);
+
+            let newLookDirection: fc.Vector3 = this.rotateVector(lookDirection, angleRotation);
+
+            if (this.calcAngleBetweenVectors(newLookDirection, newMousePos) > 0.1) {
+                angleRotation = angleRotation * -1;
+            }
+            controlRotation.setInput(angleRotation);
+        }
+
+        private calcAngleBetweenVectors(_vector1: fc.Vector3, _vector2: fc.Vector3): number {
+            let angle: number;
+
+            angle = fc.Vector3.DOT(_vector1, _vector2) / (this.vectorAmount(_vector1) * this.vectorAmount(_vector2));
+            angle = Math.acos(angle) * 180 / Math.PI;
+
+            return angle;
+        }
+
+        private vectorAmount(_vector: fc.Vector3): number {
+            return Math.sqrt(Math.pow(_vector.x, 2) + Math.pow(_vector.y, 2) + Math.pow(_vector.z, 2));
+        }
+
+        private rotateVector(_vector: fc.Vector3, _angle: number): fc.Vector3 {
+            let _rotatedVector: fc.Vector3 = new fc.Vector3;
+            let xCoord: number;
+            let yCoord: number;
+
+            let cosAngle: number = Math.cos(_angle * Math.PI / 180);
+            let sinAngle: number = Math.sin(_angle * Math.PI / 180);
+
+            xCoord = (_vector.x * cosAngle) - (_vector.y * sinAngle);
+            yCoord = (_vector.x * sinAngle) + (_vector.y * cosAngle);
+
+            _rotatedVector = new fc.Vector3(xCoord, yCoord, 0);
+
+            return _rotatedVector;
+        }
+
+
+        
+
+
 
     }
 }

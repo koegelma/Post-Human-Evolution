@@ -17,7 +17,7 @@ namespace PHE {
     export let controlHorizontal: fc.Control = new fc.Control("AvatarControlHorizontal", 1, fc.CONTROL_TYPE.PROPORTIONAL);
     controlHorizontal.setDelay(80);
     export let controlRotation: fc.Control = new fc.Control("AvatarControlRotation", 1, fc.CONTROL_TYPE.PROPORTIONAL);
-    controlRotation.setDelay(80);
+    //controlRotation.setDelay(80);
     let controlDash: fc.Control = new fc.Control("AvatarControlDash", 1, fc.CONTROL_TYPE.PROPORTIONAL);
     let controlShoot: fc.Control = new fc.Control("AvatarControlShoot", 1, fc.CONTROL_TYPE.PROPORTIONAL);
     let controlReload: fc.Control = new fc.Control("AvatarControlReload", 1, fc.CONTROL_TYPE.PROPORTIONAL);
@@ -70,7 +70,9 @@ namespace PHE {
         viewport.initialize("Viewport", root, cmpCamera, canvas);
 
         Hud.start();
-       
+
+        canvas.addEventListener("mousemove", hndMouse);
+        canvas.addEventListener("click", shoot);
         fc.Loop.addEventListener(fc.EVENT.LOOP_FRAME, hndLoop);
         fc.Loop.start(fc.LOOP_MODE.TIME_GAME, 60);
     }
@@ -78,7 +80,7 @@ namespace PHE {
     function hndLoop(_event: Event): void {
         setControlInput();
         avatar.moveAvatar(controlVertical.getOutput(), controlHorizontal.getOutput(), controlDash.getOutput(), controlRotation.getOutput(), controlShoot.getOutput(), controlReload.getOutput());
-        //controlRotation.setInput(0);
+        controlRotation.setInput(0);
 
         hndCollision();
 
@@ -98,6 +100,23 @@ namespace PHE {
         viewport.draw();
     }
 
+    function shoot(): void {
+        avatar.shoot();
+    }
+
+    function hndMouse(_event: MouseEvent): void {
+        let mousePosClient: fc.Vector2 = new fc.Vector2(_event.clientX, _event.clientY);
+        let mousePos3DClient: fc.Vector3 = new fc.Vector3(_event.clientX, _event.clientY, 0);
+        //console.log("X: " + _event.clientX + "\nY: " + _event.clientY);
+
+        let normal: fc.Vector3 = floor.mtxWorld.getZ();
+        //let normal: fc.Vector3 = new fc.Vector3(0, 0, 1);
+        let mousePosWorld: fc.Vector3 = viewport.getRayFromClient(mousePosClient).intersectPlane(mousePos3DClient, normal);
+
+        avatar.rotateTo(mousePosWorld);
+
+    }
+
     function increaseEnemys(): void {
 
         if (timer) {
@@ -106,7 +125,7 @@ namespace PHE {
                 spawnEnemy();
                 //console.log("Test Timer");
                 timer = true;
-                if (enemySpawnTime > 200) {
+                if (enemySpawnTime > 1000) {
                     enemySpawnTime -= 100;
                 }
             });
@@ -158,6 +177,7 @@ namespace PHE {
         gameState.health = 100;
         gameState.ammo = 15;
         gameState.score = 0;
+        enemySpawnTime = 5000;
 
         viewport = new fc.Viewport();
         viewport.initialize("Viewport", root, cmpCamera, canvas);
@@ -175,10 +195,10 @@ namespace PHE {
         controlDash.setInput(
             fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.SHIFT_LEFT])
         );
-        controlRotation.setInput(
-            fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.ARROW_LEFT])
-            + fc.Keyboard.mapToValue(-1, 0, [fc.KEYBOARD_CODE.ARROW_RIGHT])
-        );
+        /*  controlRotation.setInput(
+             fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.ARROW_LEFT])
+             + fc.Keyboard.mapToValue(-1, 0, [fc.KEYBOARD_CODE.ARROW_RIGHT])
+         ); */
         controlShoot.setInput(
             fc.Keyboard.mapToValue(1, 0, [fc.KEYBOARD_CODE.SPACE])
         );

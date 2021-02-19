@@ -32,7 +32,7 @@ var PHE;
         moveAvatar(_translationY, _translationX, _dash, _rotation, _shoot, _reload) {
             let speedX = _translationX * 0.08;
             let speedY = _translationY * 0.08;
-            let rotation = _rotation * 2;
+            //let rotation: number = _rotation * 2;
             if (_dash == 1 && !this.usedDash) {
                 let dashSpeed = 15;
                 speedX *= dashSpeed;
@@ -52,31 +52,59 @@ var PHE;
             this.mtxLocal.translateY(speedY);
             this.rect.position.x = this.mtxLocal.translation.x - this.rect.size.x / 2;
             this.rect.position.y = this.mtxLocal.translation.y - this.rect.size.y / 2;
-            this.animation.mtxLocal.rotateZ(rotation);
-            if (_shoot == 1 && this.shotReady && PHE.gameState.ammo > 0) {
-                this.shoot();
-                this.shotReady = false;
-                fc.Time.game.setTimer(800, 1, (_event) => {
-                    this.shotReady = true;
-                });
-            }
-            else if (_shoot == 1 && this.shotReady && PHE.gameState.ammo == 0) {
-                PHE.cmpAudioEmptyGun.play(true);
-            }
+            this.animation.mtxLocal.rotateZ(_rotation);
             if (_reload == 1) {
                 PHE.gameState.ammo = 15;
                 PHE.cmpAudioReload.play(true);
             }
         }
         shoot() {
-            let shotDirection = this.animation.mtxWorld.getX();
-            console.log("Shootdirection: " + shotDirection);
-            let bulletPosition = new fc.Vector3(this.mtxWorld.translation.x, this.mtxWorld.translation.y - 0.24, 1);
-            PHE.bullet = new PHE.Bullet("Bullet", new fc.Vector3(0.1, 0.1, 1), bulletPosition);
-            PHE.level.appendChild(PHE.bullet);
-            PHE.cmpAudioShoot.play(true);
-            PHE.bullet.shoot(shotDirection);
-            PHE.gameState.ammo--;
+            if (this.shotReady && PHE.gameState.ammo > 0) {
+                let shotDirection = this.animation.mtxWorld.getX();
+                let bulletPosition = new fc.Vector3(this.mtxWorld.translation.x, this.mtxWorld.translation.y - 0.24, 1);
+                PHE.bullet = new PHE.Bullet("Bullet", new fc.Vector3(0.1, 0.1, 1), bulletPosition);
+                PHE.level.appendChild(PHE.bullet);
+                PHE.cmpAudioShoot.play(true);
+                PHE.bullet.shoot(shotDirection);
+                PHE.gameState.ammo--;
+                this.shotReady = false;
+                fc.Time.game.setTimer(800, 1, (_event) => {
+                    this.shotReady = true;
+                });
+            }
+            else if (this.shotReady && PHE.gameState.ammo == 0) {
+                PHE.cmpAudioEmptyGun.play(true);
+            }
+        }
+        rotateTo(_mousePos) {
+            let newMousePos = fc.Vector3.DIFFERENCE(_mousePos, this.mtxWorld.translation);
+            let lookDirection = this.animation.mtxWorld.getX();
+            let angleRotation = this.calcAngleBetweenVectors(newMousePos, lookDirection);
+            let newLookDirection = this.rotateVector(lookDirection, angleRotation);
+            if (this.calcAngleBetweenVectors(newLookDirection, newMousePos) > 0.1) {
+                angleRotation = angleRotation * -1;
+            }
+            PHE.controlRotation.setInput(angleRotation);
+        }
+        calcAngleBetweenVectors(_vector1, _vector2) {
+            let angle;
+            angle = fc.Vector3.DOT(_vector1, _vector2) / (this.vectorAmount(_vector1) * this.vectorAmount(_vector2));
+            angle = Math.acos(angle) * 180 / Math.PI;
+            return angle;
+        }
+        vectorAmount(_vector) {
+            return Math.sqrt(Math.pow(_vector.x, 2) + Math.pow(_vector.y, 2) + Math.pow(_vector.z, 2));
+        }
+        rotateVector(_vector, _angle) {
+            let _rotatedVector = new fc.Vector3;
+            let xCoord;
+            let yCoord;
+            let cosAngle = Math.cos(_angle * Math.PI / 180);
+            let sinAngle = Math.sin(_angle * Math.PI / 180);
+            xCoord = (_vector.x * cosAngle) - (_vector.y * sinAngle);
+            yCoord = (_vector.x * sinAngle) + (_vector.y * cosAngle);
+            _rotatedVector = new fc.Vector3(xCoord, yCoord, 0);
+            return _rotatedVector;
         }
     }
     PHE.Avatar = Avatar;

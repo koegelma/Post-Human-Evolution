@@ -3,12 +3,12 @@ var PHE;
 (function (PHE) {
     var fc = FudgeCore;
     class Bullet extends PHE.Moveable {
+        //public grey: fc.Material = new fc.Material("Grey", fc.ShaderUniColor, new fc.CoatColored(fc.Color.CSS("GREY")));
         constructor(_name, _size, _position) {
             super("Bullet", _size, _position);
             this.velocity = fc.Vector3.ZERO();
-            this.grey = new fc.Material("Grey", fc.ShaderUniColor, new fc.CoatColored(fc.Color.CSS("GREY")));
-            let cmpMaterial = new fc.ComponentMaterial(this.grey);
-            this.addComponent(cmpMaterial);
+            //let cmpMaterial: fc.ComponentMaterial = new fc.ComponentMaterial(this.grey);
+            //this.addComponent(cmpMaterial); 
         }
         shoot(_velocity) {
             this.velocity = _velocity;
