@@ -19,7 +19,7 @@ Dash:       <kbd>Shift</kbd>
   
 ## Installation
 
-Clone the repository and load the html via Live-Server
+Clone das Repository und starte die index.html via Live-Server
   
 ## Anforderungstabelle
   
