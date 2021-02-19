@@ -369,13 +369,6 @@ var PHE;
     let controlDifficulty = new fc.Control("ControlDifficulty", 1, 0 /* PROPORTIONAL */);
     let cmpAudioSoundtrack;
     let cmpAudioAmbience;
-    /*  export let adShoot: fc.Audio;
-     export let adReload: fc.Audio;
-     export let adEmptyGun: fc.Audio;
-     export let adZombie1: fc.Audio;
-     export let adZombie2: fc.Audio;
-     export let adSoundtrack: fc.Audio;
-     export let audioAmbience: fc.Audio; */
     let canvas;
     let cmpCamera;
     let timer = true;
@@ -399,15 +392,6 @@ var PHE;
             hndLoad();
         });
     }
-    /* async function loadSound(): Promise<void> {
-        adShoot = await new fc.Audio("../Assets/Audio/soundtrack.mp3");
-        adReload = await new fc.Audio("../Assets/Audio/Reloading-Magazine.mp3");
-        adEmptyGun = await new fc.Audio("../Assets/Audio/empty-gun.mp3");
-        adZombie1 = await fc.Audio.load("");
-        adZombie2 = await fc.Audio.load("");
-        adSoundtrack = await new fc.Audio("../Assets/Audio/soundtrack.mp3");
-        //audioAmbience = await fc.Audio.load("");
-    } */
     function hndLoad() {
         canvas = document.querySelector("canvas");
         setupLevel();
