@@ -11,6 +11,10 @@ Das Spiel ist ein 2D Shooter mit Topdown View. Es spielt in einer Postapokalypti
 ## Steuerung und Interaktion
 
 Bewegung:   <kbd>WASD</kbd>
+Rotation:   MOUSE
+Shoot:      LEFT-MOUSE-BUTTON
+Reload:     <kbd>R</kbd>
+Dash:       <kbd>Shift</kbd>
 
 
 | Nr | Bezeichnung           | Inhalt                                                                                                                                                                                                                                                                         |
