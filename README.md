@@ -16,6 +16,9 @@ Shoot:      Left-Mouse-Button
 Reload:     <kbd>R</kbd>  
 Dash:       <kbd>Shift</kbd>  
   
+## Installation
+
+Clone the repository and load the html via Live-Server
   
 ## Anforderungstabelle
   
