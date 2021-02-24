@@ -152,7 +152,7 @@ namespace PHE {
     }
 
     function spawnEnemy(): void {
-        let txtZombie2: fc.TextureImage = new fc.TextureImage("../Assets/zombie.png");
+        let txtZombie2: fc.TextureImage = new fc.TextureImage("Assets/zombie.png");
         let mtrZombie2: fc.Material = new fc.Material("MaterialEnemy", fc.ShaderTexture, new fc.CoatTextured(fc.Color.CSS("WHITE"), txtZombie2));
         enemies.appendChild(new Enemy("Enemy", new fc.Vector3(4, 4, 2), new fc.Vector3(fc.Random.default.getRange(-10, 16), fc.Random.default.getRange(-8, 8), 0), mtrZombie2));
     }
@@ -252,7 +252,7 @@ namespace PHE {
 
     function createFloor(): fc.Node {
         let floor: fc.Node = new fc.Node("Floor");
-        let txtFloor: fc.TextureImage = new fc.TextureImage("../Assets/floor.png");
+        let txtFloor: fc.TextureImage = new fc.TextureImage("Assets/floor.png");
         let mtrFloor: fc.Material = new fc.Material("MaterialAvatar", fc.ShaderTexture, new fc.CoatTextured(fc.Color.CSS("WHITE"), txtFloor));
 
         for (let y: number = -9; y < 10; y++) {
@@ -265,7 +265,7 @@ namespace PHE {
 
     function createEnemies(_number: number): fc.Node {
         let enemies: fc.Node = new fc.Node("Enemies");
-        let txtZombie2: fc.TextureImage = new fc.TextureImage("../Assets/zombie.png");
+        let txtZombie2: fc.TextureImage = new fc.TextureImage("Assets/zombie.png");
         let mtrZombie2: fc.Material = new fc.Material("MaterialEnemy", fc.ShaderTexture, new fc.CoatTextured(fc.Color.CSS("WHITE"), txtZombie2));
 
         for (let index: number = 0; index < _number; index++) {
@@ -275,28 +275,28 @@ namespace PHE {
     }
 
     function setupAudio(): void {
-        let audioShoot: fc.Audio = new fc.Audio("../Assets/Audio/12-Gauge-Pump-Action-Shotgun.mp3");
+        let audioShoot: fc.Audio = new fc.Audio("Assets/Audio/12-Gauge-Pump-Action-Shotgun.mp3");
         cmpAudioShoot = new fc.ComponentAudio(audioShoot, false);
         level.addComponent(cmpAudioShoot);
 
-        let audioReload: fc.Audio = new fc.Audio("../Assets/Audio/Reloading-Magazine.mp3");
+        let audioReload: fc.Audio = new fc.Audio("Assets/Audio/Reloading-Magazine.mp3");
         cmpAudioReload = new fc.ComponentAudio(audioReload, false);
         level.addComponent(cmpAudioReload);
 
-        let audioEmptyGun: fc.Audio = new fc.Audio("../Assets/Audio/empty-gun.mp3");
+        let audioEmptyGun: fc.Audio = new fc.Audio("Assets/Audio/empty-gun.mp3");
         cmpAudioEmptyGun = new fc.ComponentAudio(audioEmptyGun, false);
         level.addComponent(cmpAudioEmptyGun);
 
-        let audioAmbience: fc.Audio = new fc.Audio("../Assets/Audio/zombie-ambience-background.mp3");
+        let audioAmbience: fc.Audio = new fc.Audio("Assets/Audio/zombie-ambience-background.mp3");
         cmpAudioAmbience = new fc.ComponentAudio(audioAmbience, true);
         level.addComponent(cmpAudioAmbience);
         cmpAudioAmbience.play(true);
 
-        let audioZombie1: fc.Audio = new fc.Audio("../Assets/Audio/zombie-bite-1.mp3");
+        let audioZombie1: fc.Audio = new fc.Audio("Assets/Audio/zombie-bite-1.mp3");
         cmpAudioZombie1 = new fc.ComponentAudio(audioZombie1, false);
         level.addComponent(cmpAudioZombie1);
 
-        let audioZombie2: fc.Audio = new fc.Audio("../Assets/Audio/zombie-bite-2.mp3");
+        let audioZombie2: fc.Audio = new fc.Audio("Assets/Audio/zombie-bite-2.mp3");
         cmpAudioZombie2 = new fc.ComponentAudio(audioZombie2, false);
         level.addComponent(cmpAudioZombie2);
     }
