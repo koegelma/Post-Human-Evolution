@@ -94,7 +94,7 @@ var PHE;
             super(_name, _size, _position);
             this.clrWhite = fc.Color.CSS("white");
             this.meshQuad = new fc.MeshQuad();
-            this.txtAvatar = new fc.TextureImage("../Assets/avatar.png");
+            this.txtAvatar = new fc.TextureImage("Assets/avatar.png");
             this.mtrAvatar = new fc.Material("MaterialAvatar", fc.ShaderTexture, new fc.CoatTextured(this.clrWhite, this.txtAvatar));
             this.usedDash = false;
             this.shotReady = true;

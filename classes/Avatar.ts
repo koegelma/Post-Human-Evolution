@@ -9,7 +9,7 @@ namespace PHE {
 
         private clrWhite: fc.Color = fc.Color.CSS("white");
         private meshQuad: fc.MeshQuad = new fc.MeshQuad();
-        private txtAvatar: fc.TextureImage = new fc.TextureImage("../Assets/avatar.png");
+        private txtAvatar: fc.TextureImage = new fc.TextureImage("Assets/avatar.png");
         private mtrAvatar: fc.Material = new fc.Material("MaterialAvatar", fc.ShaderTexture, new fc.CoatTextured(this.clrWhite, this.txtAvatar));
         private animation: fc.Node;
         private usedDash: boolean = false;
