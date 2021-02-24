@@ -46,7 +46,7 @@ namespace PHE {
         fc.AudioManager.default.listenTo(root);
         fc.AudioManager.default.listenWith(listener);
 
-        let audioSoundtrack: fc.Audio = new fc.Audio("../Assets/Audio/soundtrack.mp3");
+        let audioSoundtrack: fc.Audio = new fc.Audio("Assets/Audio/soundtrack.mp3");
         cmpAudioSoundtrack = new fc.ComponentAudio(audioSoundtrack, true);
         root.addComponent(cmpAudioSoundtrack);
         cmpAudioSoundtrack.play(true);

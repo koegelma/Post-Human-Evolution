@@ -380,7 +380,7 @@ var PHE;
         let listener = new ƒ.ComponentAudioListener();
         fc.AudioManager.default.listenTo(PHE.root);
         fc.AudioManager.default.listenWith(listener);
-        let audioSoundtrack = new fc.Audio("../Assets/Audio/soundtrack.mp3");
+        let audioSoundtrack = new fc.Audio("Assets/Audio/soundtrack.mp3");
         cmpAudioSoundtrack = new fc.ComponentAudio(audioSoundtrack, true);
         PHE.root.addComponent(cmpAudioSoundtrack);
         cmpAudioSoundtrack.play(true);
